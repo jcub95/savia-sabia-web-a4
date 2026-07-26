@@ -11,35 +11,35 @@ import { Cart } from '@/components/cart'
 import { CartProvider } from '@/lib/cart-context'
 import { LanguageProvider } from '@/lib/language-context'
 import { LanguageToggle } from '@/components/language-toggle'
-import { type UserProfile, type Herb, type Blend, type SmokerProfileType, calculateRecommendations, calculateBlendRecommendations, determineSmokerProfile } from '@/lib/herbs-data'
+import { type QuizAnswers, type Blend, type SmokerProfileType, calculateBlendRecommendations, determineSmokerProfile } from '@/lib/herbs-data'
 
 type AppView = 'welcome' | 'survey' | 'results' | 'herbarium' | 'blends' | 'cart'
 
 export default function SaviaSabiaApp() {
   const [currentView, setCurrentView] = useState<AppView>('welcome')
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  const [recommendations, setRecommendations] = useState<Herb[]>([])
+  const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null)
   const [blendRecommendations, setBlendRecommendations] = useState<Blend[]>([])
   const [smokerProfileType, setSmokerProfileType] = useState<SmokerProfileType>('sensory')
   
+  const handleGoHome = useCallback(() => {
+    setCurrentView('welcome')
+  }, [])
+
   const handleStartSurvey = useCallback(() => {
     setCurrentView('survey')
   }, [])
   
-  const handleSurveyComplete = useCallback((profile: UserProfile) => {
-    setUserProfile(profile)
-    const recs = calculateRecommendations(profile)
-    setRecommendations(recs)
-    const profileType = determineSmokerProfile(profile)
-    setSmokerProfileType(profileType)
-    const blendRecs = calculateBlendRecommendations(profile, profileType)
+  const handleSurveyComplete = useCallback((answers: QuizAnswers) => {
+    setQuizAnswers(answers)
+    const blendRecs = calculateBlendRecommendations(answers)
     setBlendRecommendations(blendRecs)
+    const primaryBlendId = blendRecs[0]?.id as Parameters<typeof determineSmokerProfile>[0]
+    setSmokerProfileType(determineSmokerProfile(primaryBlendId))
     setCurrentView('results')
   }, [])
   
   const handleRetakeSurvey = useCallback(() => {
-    setUserProfile(null)
-    setRecommendations([])
+    setQuizAnswers(null)
     setBlendRecommendations([])
     setCurrentView('survey')
   }, [])
@@ -49,12 +49,12 @@ export default function SaviaSabiaApp() {
   }, [])
   
   const handleBackFromHerbarium = useCallback(() => {
-    if (userProfile && recommendations.length > 0) {
+    if (quizAnswers && blendRecommendations.length > 0) {
       setCurrentView('results')
     } else {
       setCurrentView('welcome')
     }
-  }, [userProfile, recommendations])
+  }, [quizAnswers, blendRecommendations])
   
   const handleShopBlends = useCallback(() => {
     setCurrentView('blends')
@@ -65,12 +65,12 @@ export default function SaviaSabiaApp() {
   }, [])
   
   const handleBackFromBlends = useCallback(() => {
-    if (userProfile && recommendations.length > 0) {
+    if (quizAnswers && blendRecommendations.length > 0) {
       setCurrentView('results')
     } else {
       setCurrentView('welcome')
     }
-  }, [userProfile, recommendations])
+  }, [quizAnswers, blendRecommendations])
   
   const handleBackFromCart = useCallback(() => {
     setCurrentView('blends')
@@ -97,36 +97,37 @@ export default function SaviaSabiaApp() {
           )}
           
           {currentView === 'survey' && (
-            <Survey onComplete={handleSurveyComplete} />
+            <Survey onComplete={handleSurveyComplete} onGoHome={handleGoHome} />
           )}
-          
-          {currentView === 'results' && userProfile && (
+
+          {currentView === 'results' && quizAnswers && (
             <Results
-              recommendations={recommendations}
               blendRecommendations={blendRecommendations}
-              profile={userProfile}
               smokerProfileType={smokerProfileType}
               onRetake={handleRetakeSurvey}
               onViewHerbarium={handleViewHerbarium}
               onShopBlends={handleShopBlends}
+              onGoHome={handleGoHome}
             />
           )}
-          
+
           {currentView === 'herbarium' && (
-            <Herbarium onBack={handleBackFromHerbarium} />
+            <Herbarium onBack={handleBackFromHerbarium} onGoHome={handleGoHome} />
           )}
-          
+
           {currentView === 'blends' && (
             <BlendsCatalog
               onBack={handleBackFromBlends}
               onViewCart={handleViewCart}
+              onGoHome={handleGoHome}
             />
           )}
-          
+
           {currentView === 'cart' && (
             <Cart
               onBack={handleBackFromCart}
               onContinueShopping={handleShopBlends}
+              onGoHome={handleGoHome}
             />
           )}
           </motion.div>

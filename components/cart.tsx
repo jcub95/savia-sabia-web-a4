@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, CreditCard, Package, CheckCircle2, Leaf } from 'lucide-react'
+import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, CreditCard, Package, CheckCircle2, Leaf, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -14,13 +14,14 @@ import { useLanguage } from '@/lib/language-context'
 interface CartProps {
   onBack: () => void
   onContinueShopping: () => void
+  onGoHome: () => void
 }
 
-export function Cart({ onBack, onContinueShopping }: CartProps) {
+export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false)
   const [orderComplete, setOrderComplete] = useState(false)
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   
   const getHerbById = (id: string) => herbs.find(h => h.id === id)
   
@@ -80,10 +81,16 @@ export function Cart({ onBack, onContinueShopping }: CartProps) {
         {/* Header */}
         <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-lg border-b border-border">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={onBack} className="gap-1">
-              <ArrowLeft className="size-4" />
-              {t('cart.back')}
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" onClick={onGoHome} className="gap-1">
+                <Home className="size-4" />
+                {t('nav.home')}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={onBack} className="gap-1">
+                <ArrowLeft className="size-4" />
+                {t('nav.back')}
+              </Button>
+            </div>
             <h1 className="font-serif text-lg font-semibold text-foreground">{t('cart.title')}</h1>
             <div className="w-16" />
           </div>
@@ -141,7 +148,7 @@ export function Cart({ onBack, onContinueShopping }: CartProps) {
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-foreground font-medium">{t('cart.add_more')}</span>
               <span className="text-primary font-semibold">
-                {formatPrice(freeShippingThreshold - subtotal)} away
+                {formatPrice(freeShippingThreshold - subtotal)} {t('cart.away')}
               </span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -187,10 +194,10 @@ export function Cart({ onBack, onContinueShopping }: CartProps) {
                         {/* Blend Info */}
                         <div className="flex-1">
                           <h3 className="font-serif font-semibold text-foreground mb-1">
-                            {item.blend.displayName}
+                            {item.blend.displayName[language]}
                           </h3>
                           <Badge variant="secondary" className="text-xs mb-2">
-                            {item.variant.label}
+                            {item.variant.label[language]}
                           </Badge>
                           <div className="flex flex-wrap gap-1 mb-2">
                             {item.blend.herbs.slice(0, 3).map((herbId) => {

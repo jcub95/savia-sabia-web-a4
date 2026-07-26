@@ -2,22 +2,22 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Leaf, ChevronRight, ChevronDown, Sparkles, Heart, Wind, Sun, RotateCcw, BookOpen, Package, ShoppingCart } from 'lucide-react'
+import { Leaf, ChevronRight, ChevronDown, Sparkles, Heart, Wind, Sun, RotateCcw, BookOpen, Package, ShoppingCart, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { type Herb, type Blend, type UserProfile, type SmokerProfileType, smokerProfiles, herbs } from '@/lib/herbs-data'
+import { type Herb, type Blend, type SmokerProfileType, smokerProfiles, herbs } from '@/lib/herbs-data'
+import { useLanguage } from '@/lib/language-context'
 import { HerbDetail } from './herb-detail'
 
 interface ResultsProps {
-  recommendations: Herb[]
   blendRecommendations: Blend[]
-  profile: UserProfile
   smokerProfileType: SmokerProfileType
   onRetake: () => void
   onViewHerbarium: () => void
   onShopBlends: () => void
+  onGoHome: () => void
 }
 
 const categoryIcons = {
@@ -28,51 +28,32 @@ const categoryIcons = {
   balancing: Leaf,
 }
 
-export function Results({ recommendations, blendRecommendations, profile, smokerProfileType, onRetake, onViewHerbarium, onShopBlends }: ResultsProps) {
+export function Results({ blendRecommendations, smokerProfileType, onRetake, onViewHerbarium, onShopBlends, onGoHome }: ResultsProps) {
+  const { language, t } = useLanguage()
   const [selectedHerb, setSelectedHerb] = useState<Herb | null>(null)
   const [expandedBlend, setExpandedBlend] = useState<string | null>(null)
   const [primaryBlend, secondaryBlend] = blendRecommendations
   const smokerProfile = smokerProfiles[smokerProfileType]
   
   const getHerbById = (id: string) => herbs.find(h => h.id === id)
-  
+
   if (selectedHerb) {
     return <HerbDetail herb={selectedHerb} onBack={() => setSelectedHerb(null)} />
   }
-  
-  const getProfileSummary = () => {
-    const summaryParts = []
-    
-    if (profile.desiredEffect === 'relaxation') summaryParts.push('seeking calm')
-    if (profile.desiredEffect === 'energy') summaryParts.push('seeking energy')
-    if (profile.desiredEffect === 'clarity') summaryParts.push('seeking clarity')
-    if (profile.desiredEffect === 'respiratory') summaryParts.push('prioritizing respiratory health')
-    if (profile.desiredEffect === 'mood') summaryParts.push('seeking mood enhancement')
-    
-    if (profile.stressLevel === 'high' || profile.stressLevel === 'very_high') {
-      summaryParts.push('managing stress')
-    }
-    
-    if (profile.transitionGoal === 'quit_tobacco') {
-      summaryParts.push('transitioning from tobacco')
-    }
-    
-    return summaryParts.slice(0, 2).join(' and ')
-  }
-  
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Leaf className="size-5 text-primary" />
-              <span className="font-serif text-lg font-semibold text-foreground">Savia Sabia</span>
-            </div>
+            <Button variant="ghost" size="sm" onClick={onGoHome} className="gap-1">
+              <Home className="size-4" />
+              {t('nav.home')}
+            </Button>
             <Button variant="ghost" size="sm" onClick={onRetake}>
               <RotateCcw className="size-4 mr-1" />
-              Retake
+              {t('results.retake')}
             </Button>
           </div>
         </div>
@@ -98,26 +79,26 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                   <span className="text-3xl">{smokerProfile.icon}</span>
                 </motion.div>
                 <div>
-                  <Badge className="mb-2 bg-primary/20 text-primary border-0">Your Profile</Badge>
+                  <Badge className="mb-2 bg-primary/20 text-primary border-0">{t('results.your_profile')}</Badge>
                   <h2 className="font-serif text-xl font-bold text-foreground text-balance">
-                    {smokerProfile.name}
+                    {smokerProfile.name[language]}
                   </h2>
                 </div>
               </div>
               
               <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                {smokerProfile.description}
+                {smokerProfile.description[language]}
               </p>
               
               <div className="space-y-2 mb-4">
                 <div className="text-xs font-medium text-foreground uppercase tracking-wider">
-                  Key Characteristics
+                  {t('results.key_characteristics')}
                 </div>
                 <ul className="space-y-1.5">
                   {smokerProfile.characteristics.map((char, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                       <span className="text-primary mt-0.5">•</span>
-                      {char}
+                      {char[language]}
                     </li>
                   ))}
                 </ul>
@@ -125,10 +106,10 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
               
               <div className="p-3 bg-background/50 rounded-lg border border-border/50">
                 <div className="text-xs font-medium text-primary uppercase tracking-wider mb-1">
-                  Recommended Approach
+                  {t('results.recommended_approach')}
                 </div>
                 <p className="text-sm text-foreground leading-relaxed">
-                  {smokerProfile.recommendedApproach}
+                  {smokerProfile.recommendedApproach[language]}
                 </p>
               </div>
             </CardContent>
@@ -145,7 +126,7 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
           <div className="flex items-center gap-2 mb-4">
             <Package className="size-5 text-primary" />
             <h2 className="font-serif text-xl font-semibold text-foreground">
-              Recommended Blends
+              {t('results.recommended_blends')}
             </h2>
           </div>
           
@@ -158,9 +139,9 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <Badge className="mb-2 bg-primary/20 text-primary border-0 text-xs">Best Match</Badge>
+                  <Badge className="mb-2 bg-primary/20 text-primary border-0 text-xs">{t('results.best_match')}</Badge>
                   <h3 className="font-serif text-lg font-bold text-foreground">
-                    {primaryBlend.displayName}
+                    {primaryBlend.displayName[language]}
                   </h3>
                 </div>
                 <ChevronDown className={cn(
@@ -170,18 +151,18 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
               </div>
               
               <p className="text-sm text-muted-foreground mb-3">
-                {primaryBlend.description}
+                {primaryBlend.description[language]}
               </p>
               
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {primaryBlend.herbs.map((herbId) => {
                   const herb = getHerbById(herbId)
                   return herb ? (
-                    <span 
+                    <span
                       key={herbId}
                       className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
                     >
-                      {herb.icon} {herb.name}
+                      {herb.icon} {herb.name[language]}
                     </span>
                   ) : null
                 })}
@@ -196,30 +177,30 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                 >
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
-                      <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Best For</div>
+                      <div className="text-xs font-medium text-muted-foreground uppercase mb-1">{t('results.best_for')}</div>
                       <ul className="space-y-0.5">
                         {primaryBlend.bestFor.slice(0, 3).map((item, i) => (
                           <li key={i} className="text-xs text-foreground flex items-center gap-1">
-                            <span className="text-primary">•</span> {item}
+                            <span className="text-primary">•</span> {item[language]}
                           </li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <div className="text-xs font-medium text-muted-foreground uppercase mb-1">Benefits</div>
+                      <div className="text-xs font-medium text-muted-foreground uppercase mb-1">{t('results.benefits')}</div>
                       <ul className="space-y-0.5">
                         {primaryBlend.benefits.slice(0, 3).map((item, i) => (
                           <li key={i} className="text-xs text-foreground flex items-center gap-1">
-                            <span className="text-primary">•</span> {item}
+                            <span className="text-primary">•</span> {item[language]}
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="capitalize">Intensity: {primaryBlend.intensity}</span>
+                    <span className="capitalize">{t('results.intensity')}: {t(`common.${primaryBlend.intensity}`)}</span>
                     <span>•</span>
-                    <span>Best time: {primaryBlend.timeOfDay.join(', ')}</span>
+                    <span>{t('results.best_time')}: {primaryBlend.timeOfDay.map(d => t(`time.${d}`)).join(', ')}</span>
                   </div>
                 </motion.div>
               )}
@@ -235,9 +216,9 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <Badge variant="secondary" className="mb-2 text-xs">Also Recommended</Badge>
+                  <Badge variant="secondary" className="mb-2 text-xs">{t('results.also_recommended')}</Badge>
                   <h3 className="font-serif text-base font-semibold text-foreground">
-                    {secondaryBlend.displayName}
+                    {secondaryBlend.displayName[language]}
                   </h3>
                 </div>
                 <ChevronDown className={cn(
@@ -250,11 +231,11 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                 {secondaryBlend.herbs.map((herbId) => {
                   const herb = getHerbById(herbId)
                   return herb ? (
-                    <span 
+                    <span
                       key={herbId}
                       className="px-2 py-0.5 bg-secondary/50 text-secondary-foreground text-xs rounded-full"
                     >
-                      {herb.icon} {herb.name}
+                      {herb.icon} {herb.name[language]}
                     </span>
                   ) : null
                 })}
@@ -268,12 +249,12 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                   className="pt-3 mt-3 border-t border-border"
                 >
                   <p className="text-sm text-muted-foreground mb-3">
-                    {secondaryBlend.description}
+                    {secondaryBlend.description[language]}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {secondaryBlend.benefits.map((benefit, i) => (
                       <span key={i} className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-md">
-                        {benefit}
+                        {benefit[language]}
                       </span>
                     ))}
                   </div>
@@ -293,7 +274,7 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
           <div className="flex items-center gap-2 mb-4">
             <Leaf className="size-5 text-primary" />
             <h2 className="font-serif text-xl font-semibold text-foreground">
-              Herbs in {primaryBlend.displayName}
+              {t('results.herbs_in_blend')} {primaryBlend.displayName[language]}
             </h2>
           </div>
           
@@ -319,20 +300,20 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                         <div className="size-14 rounded-xl overflow-hidden bg-cream-50 shrink-0 border border-border">
                           <img
                             src={herb.image}
-                            alt={herb.name}
+                            alt={herb.name[language]}
                             className="w-full h-full object-contain"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
                             <div className="font-serif font-semibold text-foreground flex items-center gap-2">
-                              {herb.name}
+                              {herb.name[language]}
                               <Icon className="size-4 text-muted-foreground" />
                             </div>
                             <ChevronRight className="size-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                           </div>
                           <p className="text-xs text-muted-foreground mb-2">
-                            {herb.flavorProfile}
+                            {herb.flavorProfile[language]}
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {herb.benefits.map((benefit, i) => (
@@ -340,7 +321,7 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
                                 key={i}
                                 className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-md"
                               >
-                                {benefit}
+                                {benefit[language]}
                               </span>
                             ))}
                           </div>
@@ -367,9 +348,9 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
             size="lg"
           >
             <ShoppingCart className="size-5 mr-2" />
-            Shop Our Blends
+            {t('results.shop_blends')}
           </Button>
-          
+
           <Button
             onClick={onViewHerbarium}
             variant="outline"
@@ -377,7 +358,7 @@ export function Results({ recommendations, blendRecommendations, profile, smoker
             size="lg"
           >
             <BookOpen className="size-4 mr-2" />
-            Explore Full Herbarium
+            {t('results.explore_herbarium')}
           </Button>
         </motion.div>
       </main>

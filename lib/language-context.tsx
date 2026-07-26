@@ -15,6 +15,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Welcome
     'welcome.title': 'Savia Sabia',
+    'welcome.tagline': 'Less chemistry. More botany.',
     'welcome.subtitle': 'Discover Your Perfect Herbal Blend',
     'welcome.description': 'Take our personalized survey to find the ideal herbal smoking experience tailored to your lifestyle and wellness goals.',
     'welcome.start_survey': 'Find My Blend',
@@ -24,12 +25,22 @@ const translations: Record<Language, Record<string, string>> = {
     'welcome.natural': '100% Natural',
     'welcome.personalized': 'Personalized',
     
+    // Navigation
+    'nav.home': 'Home',
+    'nav.back': 'Back',
+
     // Survey
     'survey.title': 'Personalized Survey',
     'survey.subtitle': 'Answer a few questions to discover your ideal herbal blend',
     'survey.next': 'Continue',
     'survey.back': 'Back',
     'survey.submit': 'Get My Results',
+    'survey.see_results': 'See Results',
+    'survey.of': 'of',
+    'survey.category.habits': 'habits',
+    'survey.category.health': 'health',
+    'survey.category.preferences': 'preferences',
+    'survey.category.goals': 'goals',
     
     // Survey Questions
     'survey.q1.title': 'How often do you smoke?',
@@ -136,6 +147,7 @@ const translations: Record<Language, Record<string, string>> = {
     'cart.free_shipping_at': 'Free shipping at',
     'cart.free_shipping_unlocked': 'Free shipping unlocked!',
     'cart.add_more': 'Add more for free shipping',
+    'cart.away': 'away from free shipping',
     'cart.order_summary': 'Order Summary',
     'cart.subtotal': 'Subtotal',
     'cart.shipping': 'Shipping',
@@ -158,6 +170,7 @@ const translations: Record<Language, Record<string, string>> = {
     'herbarium.subtitle': 'Explore our collection of 15 carefully selected herbs',
     'herbarium.back': 'Back',
     'herbarium.search': 'Search herbs...',
+    'herbarium.search_placeholder': 'Search herbs...',
     'herbarium.all': 'All',
     'herbarium.calming': 'Calming',
     'herbarium.energizing': 'Energizing',
@@ -171,7 +184,37 @@ const translations: Record<Language, Record<string, string>> = {
     'herb.best_for': 'Best For',
     'herb.flavor': 'Flavor Profile',
     'herb.close': 'Close',
-    
+    'herb.about': 'About',
+    'herb.effects_experience': 'Effects & Experience',
+    'herb.key_benefits': 'Key Benefits',
+    'herb.flavor_profile': 'Flavor Profile',
+    'herb.role_in_blend': 'Role in the Blend',
+    'herb.found_in': 'Found in',
+    'herb.category_suffix': 'Category',
+
+    // Shop (blends catalog)
+    'shop.recommended_time': 'Recommended Time',
+    'shop.herb_composition': 'Herb Composition',
+
+    // Time of day
+    'time.morning': 'morning',
+    'time.afternoon': 'afternoon',
+    'time.evening': 'evening',
+    'time.night': 'night',
+    'time.anytime': 'anytime',
+
+    // Effects (blend primaryEffect)
+    'effect.calming': 'calming',
+    'effect.energizing': 'energizing',
+    'effect.respiratory': 'respiratory',
+    'effect.focus': 'focus',
+    'effect.sleep': 'sleep',
+    'effect.spiritual': 'spiritual',
+
+    // Herbarium empty state
+    'herbarium.no_herbs_found': 'No herbs found',
+    'herbarium.no_herbs_desc': 'Try adjusting your search or filters',
+
     // Common
     'common.gentle': 'gentle',
     'common.moderate': 'moderate',
@@ -180,6 +223,7 @@ const translations: Record<Language, Record<string, string>> = {
   es: {
     // Welcome
     'welcome.title': 'Savia Sabia',
+    'welcome.tagline': 'Menos químicos. Más plantas.',
     'welcome.subtitle': 'Descubre Tu Mezcla Herbal Perfecta',
     'welcome.description': 'Realiza nuestra encuesta personalizada para encontrar la experiencia de fumar herbal ideal, adaptada a tu estilo de vida y objetivos de bienestar.',
     'welcome.start_survey': 'Encontrar Mi Mezcla',
@@ -189,12 +233,22 @@ const translations: Record<Language, Record<string, string>> = {
     'welcome.natural': '100% Natural',
     'welcome.personalized': 'Personalizado',
     
+    // Navigation
+    'nav.home': 'Inicio',
+    'nav.back': 'Atrás',
+
     // Survey
     'survey.title': 'Encuesta Personalizada',
     'survey.subtitle': 'Responde algunas preguntas para descubrir tu mezcla herbal ideal',
     'survey.next': 'Continuar',
     'survey.back': 'Atrás',
     'survey.submit': 'Ver Mis Resultados',
+    'survey.see_results': 'Ver Resultados',
+    'survey.of': 'de',
+    'survey.category.habits': 'hábitos',
+    'survey.category.health': 'salud',
+    'survey.category.preferences': 'preferencias',
+    'survey.category.goals': 'objetivos',
     
     // Survey Questions
     'survey.q1.title': '¿Con qué frecuencia fumas?',
@@ -301,6 +355,7 @@ const translations: Record<Language, Record<string, string>> = {
     'cart.free_shipping_at': 'Envío gratis a partir de',
     'cart.free_shipping_unlocked': '¡Envío gratis desbloqueado!',
     'cart.add_more': 'Agrega más para envío gratis',
+    'cart.away': 'para envío gratis',
     'cart.order_summary': 'Resumen del Pedido',
     'cart.subtotal': 'Subtotal',
     'cart.shipping': 'Envío',
@@ -323,6 +378,7 @@ const translations: Record<Language, Record<string, string>> = {
     'herbarium.subtitle': 'Explora nuestra colección de 15 hierbas cuidadosamente seleccionadas',
     'herbarium.back': 'Atrás',
     'herbarium.search': 'Buscar hierbas...',
+    'herbarium.search_placeholder': 'Buscar hierbas...',
     'herbarium.all': 'Todas',
     'herbarium.calming': 'Calmantes',
     'herbarium.energizing': 'Energizantes',
@@ -336,7 +392,37 @@ const translations: Record<Language, Record<string, string>> = {
     'herb.best_for': 'Ideal Para',
     'herb.flavor': 'Perfil de Sabor',
     'herb.close': 'Cerrar',
-    
+    'herb.about': 'Sobre',
+    'herb.effects_experience': 'Efectos y Experiencia',
+    'herb.key_benefits': 'Beneficios Clave',
+    'herb.flavor_profile': 'Perfil de Sabor',
+    'herb.role_in_blend': 'Función en la mezcla',
+    'herb.found_in': 'Aparece en',
+    'herb.category_suffix': 'Categoría',
+
+    // Shop (blends catalog)
+    'shop.recommended_time': 'Momento Recomendado',
+    'shop.herb_composition': 'Composición de Hierbas',
+
+    // Time of day
+    'time.morning': 'mañana',
+    'time.afternoon': 'tarde',
+    'time.evening': 'noche temprana',
+    'time.night': 'noche',
+    'time.anytime': 'cualquier momento',
+
+    // Effects (blend primaryEffect)
+    'effect.calming': 'calmante',
+    'effect.energizing': 'energizante',
+    'effect.respiratory': 'respiratorio',
+    'effect.focus': 'enfoque',
+    'effect.sleep': 'sueño',
+    'effect.spiritual': 'espiritual',
+
+    // Herbarium empty state
+    'herbarium.no_herbs_found': 'Sin resultados',
+    'herbarium.no_herbs_desc': 'Intenta ajustar tu búsqueda o los filtros',
+
     // Common
     'common.gentle': 'suave',
     'common.moderate': 'moderado',

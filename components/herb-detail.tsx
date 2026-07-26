@@ -1,12 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowLeft, Leaf, Sparkles, Clock, Flame, Heart, Wind, Sun, Check } from 'lucide-react'
+import { ArrowLeft, Leaf, Sparkles, Flame, Heart, Wind, Sun, Check, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { type Herb } from '@/lib/herbs-data'
+import { type Herb, blends } from '@/lib/herbs-data'
+import { useLanguage } from '@/lib/language-context'
 
 interface HerbDetailProps {
   herb: Herb
@@ -21,17 +22,29 @@ const categoryIcons = {
   balancing: Leaf,
 }
 
-const categoryDescriptions = {
-  calming: 'Promotes relaxation and stress relief',
-  energizing: 'Enhances focus and mental clarity',
-  respiratory: 'Supports healthy breathing',
-  aromatic: 'Elevates the sensory experience',
-  balancing: 'Harmonizes mind and body',
+type HerbCategory = 'calming' | 'energizing' | 'respiratory' | 'aromatic' | 'balancing'
+
+const categoryLabels: Record<HerbCategory, { en: string; es: string }> = {
+  calming:     { en: 'Calming',     es: 'Calmante'     },
+  energizing:  { en: 'Energizing',  es: 'Energizante'  },
+  respiratory: { en: 'Respiratory', es: 'Respiratoria' },
+  aromatic:    { en: 'Aromatic',    es: 'Aromática'    },
+  balancing:   { en: 'Balancing',   es: 'Equilibrante' },
+}
+
+const categoryDescriptions: Record<HerbCategory, { en: string; es: string }> = {
+  calming:     { en: 'Promotes relaxation and stress relief',   es: 'Promueve la relajación y el alivio del estrés'  },
+  energizing:  { en: 'Enhances focus and mental clarity',       es: 'Mejora el enfoque y la claridad mental'         },
+  respiratory: { en: 'Supports healthy breathing',              es: 'Favorece la respiración saludable'              },
+  aromatic:    { en: 'Elevates the sensory experience',         es: 'Eleva la experiencia sensorial'                 },
+  balancing:   { en: 'Harmonizes mind and body',                es: 'Armoniza mente y cuerpo'                       },
 }
 
 export function HerbDetail({ herb, onBack }: HerbDetailProps) {
+  const { language, t } = useLanguage()
   const CategoryIcon = categoryIcons[herb.category]
-  
+  const cat = herb.category as HerbCategory
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -46,7 +59,7 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
             className="mb-6 text-primary-foreground hover:bg-white/20"
           >
             <ArrowLeft className="size-4 mr-1" />
-            Back
+            {t('nav.back')}
           </Button>
           
           <motion.div
@@ -62,16 +75,16 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
             >
               <img
                 src={herb.image}
-                alt={herb.name}
+                alt={herb.name[language]}
                 className="w-full h-full object-contain"
               />
             </motion.div>
             <h1 className="font-serif text-4xl font-bold text-primary-foreground mb-2">
-              {herb.name}
+              {herb.name[language]}
             </h1>
-            <Badge className="bg-white/20 text-primary-foreground border-0 capitalize">
+            <Badge className="bg-white/20 text-primary-foreground border-0">
               <CategoryIcon className="size-3 mr-1" />
-              {herb.category}
+              {categoryLabels[cat][language]}
             </Badge>
           </motion.div>
         </div>
@@ -89,10 +102,10 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
             <CardContent className="p-6">
               <h2 className="font-serif text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Leaf className="size-5 text-primary" />
-                About {herb.name}
+                {t('herb.about')} {herb.name[language]}
               </h2>
               <p className="text-foreground leading-relaxed">
-                {herb.description}
+                {herb.description[language]}
               </p>
             </CardContent>
           </Card>
@@ -108,10 +121,10 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
             <CardContent className="p-6">
               <h2 className="font-serif text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Sparkles className="size-5 text-primary" />
-                Effects & Experience
+                {t('herb.effects_experience')}
               </h2>
               <p className="text-foreground leading-relaxed">
-                {herb.effects}
+                {herb.effects[language]}
               </p>
             </CardContent>
           </Card>
@@ -125,12 +138,12 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
           className="mb-6"
         >
           <h2 className="font-serif text-lg font-semibold text-foreground mb-3">
-            Key Benefits
+            {t('herb.key_benefits')}
           </h2>
           <div className="space-y-2">
             {herb.benefits.map((benefit, index) => (
               <motion.div
-                key={benefit}
+                key={benefit.en}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.55 + index * 0.1 }}
@@ -139,7 +152,7 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
                 <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                   <Check className="size-4 text-primary" />
                 </div>
-                <span className="text-foreground">{benefit}</span>
+                <span className="text-foreground">{benefit[language]}</span>
               </motion.div>
             ))}
           </div>
@@ -154,18 +167,18 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
         >
           <h2 className="font-serif text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
             <Flame className="size-5 text-accent" />
-            Flavor Profile
+            {t('herb.flavor_profile')}
           </h2>
           <Card>
             <CardContent className="p-4">
               <p className="text-foreground italic">
-                {'"'}{herb.flavorProfile}{'"'}
+                {'"'}{herb.flavorProfile[language]}{'"'}
               </p>
             </CardContent>
           </Card>
         </motion.div>
         
-        {/* Best For */}
+        {/* Role in Blend */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -173,18 +186,48 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
           className="mb-6"
         >
           <h2 className="font-serif text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Clock className="size-5 text-muted-foreground" />
-            Best For
+            <FlaskConical className="size-5 text-primary" />
+            {t('herb.role_in_blend')}
           </h2>
-          <div className="flex flex-wrap gap-2">
-            {herb.bestFor.map((item) => (
-              <Badge key={item} variant="secondary" className="text-sm py-1.5 px-3">
-                {item}
-              </Badge>
-            ))}
-          </div>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-foreground">
+                {herb.role[language]}
+              </p>
+            </CardContent>
+          </Card>
         </motion.div>
-        
+
+        {/* Aparece en */}
+        {(() => {
+          const herbBlends = blends.filter(b => b.herbs.includes(herb.id))
+          if (herbBlends.length === 0) return null
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.85 }}
+              className="mb-6"
+            >
+              <h2 className="font-serif text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Leaf className="size-5 text-primary" />
+                {t('herb.found_in')}
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {herbBlends.map(blend => (
+                  <Badge
+                    key={blend.id}
+                    variant="secondary"
+                    className="text-sm py-1.5 px-3"
+                  >
+                    {blend.displayName[language]}
+                  </Badge>
+                ))}
+              </div>
+            </motion.div>
+          )
+        })()}
+
         {/* Category Info */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -201,11 +244,11 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
                   <CategoryIcon className="size-5 text-primary-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-serif font-semibold text-foreground capitalize">
-                    {herb.category} Category
+                  <h3 className="font-serif font-semibold text-foreground">
+                    {categoryLabels[cat][language]} {t('herb.category_suffix')}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {categoryDescriptions[herb.category]}
+                    {categoryDescriptions[cat][language]}
                   </p>
                 </div>
               </div>

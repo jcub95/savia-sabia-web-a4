@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ShoppingCart, Check, Clock, Leaf, Sparkles, ChevronDown, Package } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Check, Clock, Leaf, Sparkles, ChevronDown, Package, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -14,9 +14,10 @@ import { useLanguage } from '@/lib/language-context'
 interface BlendsCatalogProps {
   onBack: () => void
   onViewCart: () => void
+  onGoHome: () => void
 }
 
-export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
+export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogProps) {
   const [expandedBlend, setExpandedBlend] = useState<string | null>(null)
   const [selectedVariants, setSelectedVariants] = useState<Record<string, ProductVariant>>(
     // Default to 10g bag for all blends
@@ -24,7 +25,7 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
   )
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set())
   const { addToCart, getTotalItems } = useCart()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   
   const getHerbById = (id: string) => herbs.find(h => h.id === id)
   
@@ -69,15 +70,16 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
       {/* Header */}
       <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            className="gap-1"
-          >
-            <ArrowLeft className="size-4" />
-            {t('shop.back')}
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onGoHome} className="gap-1">
+              <Home className="size-4" />
+              {t('nav.home')}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={onBack} className="gap-1">
+              <ArrowLeft className="size-4" />
+              {t('nav.back')}
+            </Button>
+          </div>
           
           <h1 className="font-serif text-lg font-semibold text-foreground">
             {t('shop.title')}
@@ -144,15 +146,15 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-lg">{getEffectIcon(blend.primaryEffect)}</span>
-                            <Badge variant="secondary" className="text-xs capitalize">
-                              {blend.primaryEffect}
+                            <Badge variant="secondary" className="text-xs">
+                              {t(`effect.${blend.primaryEffect}`)}
                             </Badge>
-                            <Badge variant="outline" className="text-xs capitalize">
-                              {blend.intensity}
+                            <Badge variant="outline" className="text-xs">
+                              {t(`common.${blend.intensity}`)}
                             </Badge>
                           </div>
                           <h3 className="font-serif text-lg font-bold text-foreground">
-                            {blend.displayName}
+                            {blend.displayName[language]}
                           </h3>
                         </div>
                         <ChevronDown className={cn(
@@ -160,9 +162,9 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                           isExpanded && "rotate-180"
                         )} />
                       </div>
-                      
+
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                        {blend.description}
+                        {blend.description[language]}
                       </p>
                       
                       {/* Herbs Preview */}
@@ -170,11 +172,11 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                         {blend.herbs.map((herbId) => {
                           const herb = getHerbById(herbId)
                           return herb ? (
-                            <span 
+                            <span
                               key={herbId}
                               className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
                             >
-                              {herb.icon} {herb.name}
+                              {herb.icon} {herb.name[language]}
                             </span>
                           ) : null
                         })}
@@ -201,11 +203,11 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
                                   {blend.benefits.map((benefit, i) => (
-                                    <span 
+                                    <span
                                       key={i}
                                       className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md"
                                     >
-                                      {benefit}
+                                      {benefit[language]}
                                     </span>
                                   ))}
                                 </div>
@@ -220,7 +222,7 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                                 <ul className="space-y-1">
                                   {blend.bestFor.map((item, i) => (
                                     <li key={i} className="text-sm text-foreground flex items-center gap-2">
-                                      <span className="text-primary">•</span> {item}
+                                      <span className="text-primary">•</span> {item[language]}
                                     </li>
                                   ))}
                                 </ul>
@@ -230,15 +232,15 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                               <div>
                                 <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
                                   <Clock className="size-3" />
-                                  Recommended Time
+                                  {t('shop.recommended_time')}
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
                                   {blend.timeOfDay.map((time) => (
-                                    <span 
+                                    <span
                                       key={time}
-                                      className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-md capitalize"
+                                      className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-md"
                                     >
-                                      {time}
+                                      {t(`time.${time}`)}
                                     </span>
                                   ))}
                                 </div>
@@ -247,7 +249,7 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                               {/* Herb Details */}
                               <div>
                                 <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                                  Herb Composition
+                                  {t('shop.herb_composition')}
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   {blend.herbs.map((herbId) => {
@@ -259,10 +261,10 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                                       >
                                         <div className="flex items-center gap-1.5 mb-1">
                                           <span>{herb.icon}</span>
-                                          <span className="text-sm font-medium text-foreground">{herb.name}</span>
+                                          <span className="text-sm font-medium text-foreground">{herb.name[language]}</span>
                                         </div>
                                         <p className="text-xs text-muted-foreground line-clamp-2">
-                                          {herb.benefits.slice(0, 2).join(', ')}
+                                          {herb.benefits.slice(0, 2).map(b => b[language]).join(', ')}
                                         </p>
                                       </div>
                                     ) : null
@@ -294,13 +296,13 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                                   : "border-border bg-background text-foreground hover:border-primary/50"
                               )}
                             >
-                              <div>{variant.label}</div>
+                              <div>{variant.label[language]}</div>
                               <div className="text-xs opacity-70">{formatPrice(variant.price)}</div>
                             </button>
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {t('shop.cigarettes')}
@@ -317,7 +319,7 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                                   : "border-border bg-background text-foreground hover:border-primary/50"
                               )}
                             >
-                              <div>{variant.label}</div>
+                              <div>{variant.label[language]}</div>
                               <div className="text-xs opacity-70">{formatPrice(variant.price)}</div>
                             </button>
                           ))}
@@ -331,7 +333,7 @@ export function BlendsCatalog({ onBack, onViewCart }: BlendsCatalogProps) {
                             {formatPrice(selectedVariant.price)}
                           </span>
                           <span className="text-xs text-muted-foreground ml-1">
-                            / {selectedVariant.label}
+                            / {selectedVariant.label[language]}
                           </span>
                         </div>
                         

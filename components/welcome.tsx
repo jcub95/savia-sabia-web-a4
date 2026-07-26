@@ -62,7 +62,7 @@ export function Welcome({ onStartSurvey, onViewHerbarium, onShopBlends }: Welcom
             transition={{ delay: 0.45 }}
             className="mt-5 font-serif italic text-2xl md:text-3xl text-accent text-balance"
           >
-            Menos químicos. Más plantas.
+            {t('welcome.tagline')}
           </motion.p>
         </motion.div>
 
