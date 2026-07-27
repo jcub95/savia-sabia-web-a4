@@ -28,6 +28,29 @@ const translations: Record<Language, Record<string, string>> = {
     // Navigation
     'nav.home': 'Home',
     'nav.back': 'Back',
+    'nav.mezclas': 'Blends',
+    'nav.herbario': 'Herbarium',
+    'nav.nosotros': 'About Us',
+    'nav.contacto': 'Contact',
+    'nav.menu': 'Menu',
+    'nav.cart': 'Cart',
+
+    // Footer
+    'footer.tienda.title': 'Shop',
+    'footer.tienda.mezclas': 'The Six Blends',
+    'footer.tienda.encuentra': 'Find My Blend',
+    'footer.tienda.herbario': 'Herbarium',
+    'footer.info.title': 'Information',
+    'footer.info.nosotros': 'About Us',
+    'footer.info.envios': 'Shipping & Payments',
+    'footer.info.faq': 'FAQ',
+    'footer.info.contacto': 'Contact',
+    'footer.contacto.title': 'Contact',
+    'footer.contacto.hours': 'Monday to Sunday, 8:00 a.m. – 7:00 p.m.',
+    'footer.rights': 'All rights reserved.',
+    'footer.terms': 'Terms',
+    'footer.privacy': 'Privacy',
+    'footer.wholesale_note': 'Interested in stocking Savia Sabia? Email us at',
 
     // Survey
     'survey.title': 'Personalized Survey',
@@ -236,6 +259,29 @@ const translations: Record<Language, Record<string, string>> = {
     // Navigation
     'nav.home': 'Inicio',
     'nav.back': 'Atrás',
+    'nav.mezclas': 'Mezclas',
+    'nav.herbario': 'Herbario',
+    'nav.nosotros': 'Nosotros',
+    'nav.contacto': 'Contacto',
+    'nav.menu': 'Menú',
+    'nav.cart': 'Carrito',
+
+    // Footer
+    'footer.tienda.title': 'Tienda',
+    'footer.tienda.mezclas': 'Las seis mezclas',
+    'footer.tienda.encuentra': 'Encuentra tu mezcla',
+    'footer.tienda.herbario': 'Herbario',
+    'footer.info.title': 'Información',
+    'footer.info.nosotros': 'Nosotros',
+    'footer.info.envios': 'Envíos y pagos',
+    'footer.info.faq': 'Preguntas frecuentes',
+    'footer.info.contacto': 'Contacto',
+    'footer.contacto.title': 'Contacto',
+    'footer.contacto.hours': 'Lunes a domingo, 8:00 a.m. – 7:00 p.m.',
+    'footer.rights': 'Todos los derechos reservados.',
+    'footer.terms': 'Términos',
+    'footer.privacy': 'Privacidad',
+    'footer.wholesale_note': '¿Te interesa distribuir Savia Sabia? Escríbenos a',
 
     // Survey
     'survey.title': 'Encuesta Personalizada',

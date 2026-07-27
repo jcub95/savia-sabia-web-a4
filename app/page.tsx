@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { Suspense, useState, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Welcome } from '@/components/welcome'
 import { Survey } from '@/components/survey'
@@ -8,18 +9,30 @@ import { Results } from '@/components/results'
 import { Herbarium } from '@/components/herbarium'
 import { BlendsCatalog } from '@/components/blends-catalog'
 import { Cart } from '@/components/cart'
-import { CartProvider } from '@/lib/cart-context'
-import { LanguageProvider } from '@/lib/language-context'
-import { LanguageToggle } from '@/components/language-toggle'
 import { type QuizAnswers, type Blend, type SmokerProfileType, calculateBlendRecommendations, determineSmokerProfile } from '@/lib/herbs-data'
 
 type AppView = 'welcome' | 'survey' | 'results' | 'herbarium' | 'blends' | 'cart'
 
-export default function SaviaSabiaApp() {
+// Vistas a las que se puede entrar directamente por link (?view=...), por
+// ejemplo desde el header o el footer globales. 'results' se excluye porque
+// depende de respuestas de la encuesta que no existen todavía en un enlace frío.
+const LINKABLE_VIEWS: AppView[] = ['survey', 'herbarium', 'blends', 'cart']
+
+function SaviaSabiaAppInner() {
+  const searchParams = useSearchParams()
   const [currentView, setCurrentView] = useState<AppView>('welcome')
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null)
   const [blendRecommendations, setBlendRecommendations] = useState<Blend[]>([])
   const [smokerProfileType, setSmokerProfileType] = useState<SmokerProfileType>('sensory')
+
+  // Puente temporal: el header/footer globales enlazan a `/?view=blends`, etc.
+  // hasta que el quiz y la tienda se migren a rutas propias de Next.js.
+  useEffect(() => {
+    const requestedView = searchParams.get('view') as AppView | null
+    if (requestedView && LINKABLE_VIEWS.includes(requestedView)) {
+      setCurrentView(requestedView)
+    }
+  }, [searchParams])
   
   const handleGoHome = useCallback(() => {
     setCurrentView('welcome')
@@ -77,17 +90,14 @@ export default function SaviaSabiaApp() {
   }, [])
   
   return (
-    <LanguageProvider>
-      <CartProvider>
-        <LanguageToggle />
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentView}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={currentView}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
           {currentView === 'welcome' && (
             <Welcome
               onStartSurvey={handleStartSurvey}
@@ -130,9 +140,15 @@ export default function SaviaSabiaApp() {
               onGoHome={handleGoHome}
             />
           )}
-          </motion.div>
-        </AnimatePresence>
-      </CartProvider>
-    </LanguageProvider>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+export default function SaviaSabiaApp() {
+  return (
+    <Suspense fallback={null}>
+      <SaviaSabiaAppInner />
+    </Suspense>
   )
 }

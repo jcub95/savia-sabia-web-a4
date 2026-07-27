@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Serif, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { LanguageProvider } from '@/lib/language-context'
+import { CartProvider } from '@/lib/cart-context'
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
+import { AgeGate } from '@/components/age-gate'
 import './globals.css'
 
 const plexSerif = IBM_Plex_Serif({
@@ -54,10 +59,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plexSerif.variable} ${inter.variable} bg-background`}>
-      <body className="font-sans antialiased min-h-screen">
-        {children}
+      <body className="font-sans antialiased min-h-screen flex flex-col">
+        <LanguageProvider>
+          <CartProvider>
+            <SiteHeader />
+            <div className="flex-1">{children}</div>
+            <SiteFooter />
+            <AgeGate />
+          </CartProvider>
+        </LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
 }
+
