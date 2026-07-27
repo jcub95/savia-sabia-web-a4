@@ -36,8 +36,8 @@ export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
   }
   
   const subtotal = getTotalPrice()
-  const shipping = subtotal > 0 ? 1500 : 0 // Q15 shipping
-  const freeShippingThreshold = 15000 // Q150 for free shipping
+  const shipping = subtotal > 0 ? 4500 : 0 // Q45 shipping
+  const freeShippingThreshold = 20000 // Q200 for free shipping
   const isFreeShipping = subtotal >= freeShippingThreshold
   const finalShipping = isFreeShipping ? 0 : shipping
   const total = subtotal + finalShipping

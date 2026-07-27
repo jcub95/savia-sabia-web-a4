@@ -211,8 +211,8 @@ export const enviosContent = {
   // NOTA: el documento original decía Q200; se alinea aquí a Q150, que es el
   // umbral ya confirmado e implementado en lib/cart-context.tsx.
   freeShipping: {
-    en: 'Free shipping on orders over Q150.',
-    es: 'Envío gratis en pedidos mayores a Q150.',
+    en: 'Free shipping on orders over Q200.',
+    es: 'Envío gratis en pedidos mayores a Q200.',
   } satisfies LocalizedString,
 
   pickupFree: {
