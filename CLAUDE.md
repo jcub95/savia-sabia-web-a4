@@ -143,4 +143,11 @@ La lógica del quiz debe corresponder a la matriz documentada en
 - WhatsApp: `3814-9773`
 - La venta real se cierra por conversación (DM/WhatsApp), no por checkout
   automatizado. El carrito debe terminar en un mensaje de WhatsApp pre-armado.
-- Formatos: mezcla suelta (½ oz, 2 oz) y cigarrillos listos (packs de 12 y 24).
+- Formatos y precios oficiales (iguales para las 6 mezclas):
+
+| Formato | Presentación | Precio |
+|---|---|---|
+| Mezcla suelta | ½ oz | Q45 |
+| Mezcla suelta | 2 oz | Q120 |
+| Cigarrillos listos | Pack 12 u | Q30 |
+| Cigarrillos listos | Pack 24 u | Q50 |

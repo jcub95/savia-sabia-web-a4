@@ -72,3 +72,16 @@ Este documento contiene la línea comercial de las 6 mezclas de Savia Sabia, det
 | **4. Enfoque** | Profesionales, creativos, programadores y estudiantes que usan el break para pensar. | Por las mañanas (con el café) o durante jornadas de trabajo intenso. | Estimulación cognitiva, claridad mental y frescura que elimina la fatiga cerebral. |
 | **5. Sueño Profundo** | Personas con insomnio o con el hábito arraigado de fumar antes de dormir. | Exclusivo nocturno, justo antes de ir a la cama. | Sedación física placentera, apagado del ruido mental e inducción al descanso. |
 | **6. Claridad Pulmonar** | Ex-fumadores pesados en proceso de desintoxicación o fumadores de marcas fuertes. | "Día 1" sin tabaco, crisis de abstinencia o mañanas de limpieza pulmonar. | Expectoración natural, descongestión profunda y golpe de garganta intenso. |
+
+---
+
+## 💰 Formatos y Precios
+
+Los mismos formatos y precios aplican para las 6 mezclas.
+
+| Formato | Presentación | Precio |
+| :--- | :--- | :--- |
+| Mezcla suelta | ½ oz | Q45 |
+| Mezcla suelta | 2 oz | Q120 |
+| Cigarrillos listos | Pack 12 u | Q30 |
+| Cigarrillos listos | Pack 24 u | Q50 |
