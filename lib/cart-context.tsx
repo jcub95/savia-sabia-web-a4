@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import { type Blend, type LocalizedString } from './herbs-data'
 
 export type ProductType = 'bag' | 'cigarettes'
-export type BagSize = '10g' | '28g'
+export type BagSize = '0.5oz' | '2oz'
 export type CigaretteSize = '12-pack' | '24-pack'
 export type ProductSize = BagSize | CigaretteSize
 
@@ -16,10 +16,10 @@ export interface ProductVariant {
 }
 
 export const productVariants: ProductVariant[] = [
-  { type: 'bag',        size: '10g',      label: { en: '10g',           es: '10g'           }, price: 3500 },
-  { type: 'bag',        size: '28g',      label: { en: '28g',           es: '28g'           }, price: 6000 },
-  { type: 'cigarettes', size: '12-pack',  label: { en: '12 Cigarettes', es: '12 Cigarrillos' }, price: 3000 },
-  { type: 'cigarettes', size: '24-pack',  label: { en: '24 Cigarettes', es: '24 Cigarrillos' }, price: 5500 },
+  { type: 'bag',        size: '0.5oz',   label: { en: '½ oz loose blend',   es: 'Mezcla suelta ½ oz'    }, price: 4500  },
+  { type: 'bag',        size: '2oz',     label: { en: '2 oz loose blend',   es: 'Mezcla suelta 2 oz'    }, price: 12000 },
+  { type: 'cigarettes', size: '12-pack', label: { en: '12 Cigarettes',      es: 'Pack 12 Cigarrillos'   }, price: 3000  },
+  { type: 'cigarettes', size: '24-pack', label: { en: '24 Cigarettes',      es: 'Pack 24 Cigarrillos'   }, price: 5000  },
 ]
 
 export interface CartItem {

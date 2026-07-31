@@ -208,8 +208,7 @@ export const enviosContent = {
     es: 'Los tiempos corren a partir de la confirmación del pago. Los pedidos confirmados después de las 4:00 p.m. se despachan al día hábil siguiente.',
   } satisfies LocalizedString,
 
-  // NOTA: el documento original decía Q200; se alinea aquí a Q150, que es el
-  // umbral ya confirmado e implementado en lib/cart-context.tsx.
+  // NOTA: umbral oficial confirmado en Q200, alineado con docs/Paginas_de_Soporte.md.
   freeShipping: {
     en: 'Free shipping on orders over Q200.',
     es: 'Envío gratis en pedidos mayores a Q200.',
@@ -381,8 +380,8 @@ export const faqCategories: FaqCategory[] = [
       {
         q: { en: 'Do you ship nationwide?', es: '¿Hacen envíos a todo el país?' },
         a: {
-          en: 'Yes, via Cargo Expreso for Q40. Free on orders over Q150. Same-day-plus-one in the capital; up to 3 business days elsewhere.',
-          es: 'Sí, por Cargo Expreso a Q40. Gratis en pedidos mayores a Q150. En la capital llega en 24 horas; al resto del país, hasta 3 días hábiles.',
+          en: 'Yes, via Cargo Expreso for Q40. Free on orders over Q200. Same-day-plus-one in the capital; up to 3 business days elsewhere.',
+          es: 'Sí, por Cargo Expreso a Q40. Gratis en pedidos mayores a Q200. En la capital llega en 24 horas; al resto del país, hasta 3 días hábiles.',
         },
       },
       {
