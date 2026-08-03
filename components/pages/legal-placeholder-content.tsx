@@ -20,11 +20,11 @@ export function LegalPlaceholderContent({ titleEs, titleEn }: LegalPlaceholderCo
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-2xl"
       >
-        <h1 className="font-serif font-bold text-cream text-4xl mb-6">
+        <h1 className="font-serif font-bold text-foreground text-4xl mb-6">
           {language === 'es' ? titleEs : titleEn}
         </h1>
         <div className="rounded-lg border border-accent/30 bg-secondary/40 px-5 py-4 mb-8">
-          <p className="text-sm text-cream/90 leading-relaxed">
+          <p className="text-sm text-foreground/90 leading-relaxed">
             {legalContent.placeholderNotice[language]}
           </p>
         </div>

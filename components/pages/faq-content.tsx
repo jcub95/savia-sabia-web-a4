@@ -21,7 +21,7 @@ export function FaqContent() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-2xl"
       >
-        <h1 className="font-serif font-bold text-cream text-4xl md:text-5xl mb-3 text-balance">
+        <h1 className="font-serif font-bold text-foreground text-4xl md:text-5xl mb-3 text-balance">
           {language === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}
         </h1>
         <p className="text-muted-foreground mb-12">
@@ -33,13 +33,13 @@ export function FaqContent() {
         <div className="space-y-10">
           {faqCategories.map((category) => (
             <section key={category.title[language]}>
-              <h2 className="font-serif font-semibold text-cream text-xl mb-2">
+              <h2 className="font-serif font-semibold text-foreground text-xl mb-2">
                 {category.title[language]}
               </h2>
               <Accordion type="single" collapsible className="w-full">
                 {category.items.map((item, i) => (
                   <AccordionItem key={i} value={`${category.title[language]}-${i}`} className="border-border">
-                    <AccordionTrigger className="text-left text-cream hover:no-underline">
+                    <AccordionTrigger className="text-left text-foreground hover:no-underline">
                       {item.q[language]}
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground leading-relaxed">

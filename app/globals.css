@@ -4,75 +4,76 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brand palette: dark botanical green base, warm cream, sage accents */
-  --background: #1c4a2a;
-  --foreground: #faf7ee;
-  --card: #23562f;
-  --card-foreground: #faf7ee;
-  --popover: #1b4728;
-  --popover-foreground: #faf7ee;
-  --primary: #faf7ee;
-  --primary-foreground: #1c4a2a;
-  --secondary: #2c5e39;
-  --secondary-foreground: #faf7ee;
-  --muted: #2a5433;
-  --muted-foreground: #c2cdb0;
-  --accent: #849c52;
-  --accent-foreground: #1c4a2a;
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: #faf7ee;
-  --border: rgba(250, 247, 238, 0.16);
-  --input: #2a5433;
-  --ring: #849c52;
+  /* ── Brand palette: cream base, botanical green accents ── */
+  --background: #FAF7EE;           /* crema */
+  --foreground: #1C4A2A;           /* verde botánico */
+  --card: #FFFDF7;                 /* casi blanco */
+  --card-foreground: #1C4A2A;
+  --popover: #FFFDF7;
+  --popover-foreground: #1C4A2A;
+  --primary: #1C4A2A;              /* verde oscuro */
+  --primary-foreground: #FAF7EE;   /* crema sobre verde */
+  --secondary: #F2EDDF;            /* crema tostado */
+  --secondary-foreground: #1C4A2A;
+  --muted: #F2EDDF;
+  --muted-foreground: #5A6B52;     /* oliva */
+  --accent: #4A6C3E;               /* verde medio legible */
+  --accent-foreground: #FAF7EE;
+  --destructive: #A33B2A;
+  --destructive-foreground: #FAF7EE;
+  --border: #E3DCC8;
+  --input: #E3DCC8;
+  --ring: #849C52;
   --chart-1: #849c52;
   --chart-2: #e29e3e;
   --chart-3: #dfb0ba;
   --chart-4: #8c7abe;
   --chart-5: #dbbd58;
   --radius: 0.5rem;
-  --sidebar: #1b4728;
-  --sidebar-foreground: #faf7ee;
-  --sidebar-primary: #849c52;
-  --sidebar-primary-foreground: #1c4a2a;
-  --sidebar-accent: #2c5e39;
-  --sidebar-accent-foreground: #faf7ee;
-  --sidebar-border: rgba(250, 247, 238, 0.16);
-  --sidebar-ring: #849c52;
+  --sidebar: #FFFDF7;
+  --sidebar-foreground: #1C4A2A;
+  --sidebar-primary: #1C4A2A;
+  --sidebar-primary-foreground: #FAF7EE;
+  --sidebar-accent: #F2EDDF;
+  --sidebar-accent-foreground: #1C4A2A;
+  --sidebar-border: #E3DCC8;
+  --sidebar-ring: #849C52;
 }
 
 .dark {
-  --background: #1c4a2a;
-  --foreground: #faf7ee;
-  --card: #23562f;
-  --card-foreground: #faf7ee;
-  --popover: #1b4728;
-  --popover-foreground: #faf7ee;
-  --primary: #faf7ee;
-  --primary-foreground: #1c4a2a;
-  --secondary: #2c5e39;
-  --secondary-foreground: #faf7ee;
-  --muted: #2a5433;
-  --muted-foreground: #c2cdb0;
-  --accent: #849c52;
-  --accent-foreground: #1c4a2a;
-  --destructive: oklch(0.5 0.2 27);
-  --destructive-foreground: #faf7ee;
-  --border: rgba(250, 247, 238, 0.16);
-  --input: #2a5433;
-  --ring: #849c52;
+  /* Mismo tema — la marca es crema en cualquier preferencia de sistema */
+  --background: #FAF7EE;
+  --foreground: #1C4A2A;
+  --card: #FFFDF7;
+  --card-foreground: #1C4A2A;
+  --popover: #FFFDF7;
+  --popover-foreground: #1C4A2A;
+  --primary: #1C4A2A;
+  --primary-foreground: #FAF7EE;
+  --secondary: #F2EDDF;
+  --secondary-foreground: #1C4A2A;
+  --muted: #F2EDDF;
+  --muted-foreground: #5A6B52;
+  --accent: #4A6C3E;
+  --accent-foreground: #FAF7EE;
+  --destructive: #A33B2A;
+  --destructive-foreground: #FAF7EE;
+  --border: #E3DCC8;
+  --input: #E3DCC8;
+  --ring: #849C52;
   --chart-1: #849c52;
   --chart-2: #e29e3e;
   --chart-3: #dfb0ba;
   --chart-4: #8c7abe;
   --chart-5: #dbbd58;
-  --sidebar: #1b4728;
-  --sidebar-foreground: #faf7ee;
-  --sidebar-primary: #849c52;
-  --sidebar-primary-foreground: #1c4a2a;
-  --sidebar-accent: #2c5e39;
-  --sidebar-accent-foreground: #faf7ee;
-  --sidebar-border: rgba(250, 247, 238, 0.16);
-  --sidebar-ring: #849c52;
+  --sidebar: #FFFDF7;
+  --sidebar-foreground: #1C4A2A;
+  --sidebar-primary: #1C4A2A;
+  --sidebar-primary-foreground: #FAF7EE;
+  --sidebar-accent: #F2EDDF;
+  --sidebar-accent-foreground: #1C4A2A;
+  --sidebar-border: #E3DCC8;
+  --sidebar-ring: #849C52;
 }
 
 @theme inline {

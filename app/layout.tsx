@@ -3,9 +3,11 @@ import { IBM_Plex_Serif, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/lib/language-context'
 import { CartProvider } from '@/lib/cart-context'
+import { StockProvider } from '@/lib/stock-context'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { AgeGate } from '@/components/age-gate'
+import { WhatsAppFloat } from '@/components/whatsapp-float'
 import './globals.css'
 
 const plexSerif = IBM_Plex_Serif({
@@ -45,7 +47,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1c4a2a',
+  themeColor: '#FAF7EE',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -62,10 +64,13 @@ export default function RootLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <LanguageProvider>
           <CartProvider>
-            <SiteHeader />
-            <div className="flex-1">{children}</div>
-            <SiteFooter />
-            <AgeGate />
+            <StockProvider>
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <SiteFooter />
+              <AgeGate />
+              <WhatsAppFloat />
+            </StockProvider>
           </CartProvider>
         </LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

@@ -49,7 +49,7 @@ export function AgeGate() {
     <AlertDialog open={open}>
       <AlertDialogContent className="bg-card border-border max-w-sm">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-serif text-cream text-xl">
+          <AlertDialogTitle className="font-serif text-card-foreground text-xl">
             {copy.question[language]}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
@@ -58,7 +58,7 @@ export function AgeGate() {
         </AlertDialogHeader>
 
         {declined ? (
-          <p className="text-sm text-cream leading-relaxed py-2">
+          <p className="text-sm text-card-foreground leading-relaxed py-2">
             {copy.declinedMessage[language]}
           </p>
         ) : (

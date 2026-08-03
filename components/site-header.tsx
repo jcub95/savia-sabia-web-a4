@@ -40,18 +40,18 @@ export function SiteHeader() {
   const isActive = (match: string) => pathname?.includes(match)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/85 backdrop-blur-lg">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
         {/* Logo + wordmark → siempre vuelve al inicio */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setMobileOpen(false)}>
           <img
-            src="/SaviaSabia_logo_monotonico_invertido_transparente.svg"
+            src="/SaviaSabia_logo_color_transparente.png"
             alt="Savia Sabia"
             width={28}
             height={46}
-            className="h-9 w-auto"
+            className="h-10 w-auto"
           />
-          <span className="font-serif font-bold text-lg text-cream tracking-tight hidden sm:inline">
+          <span className="font-serif font-bold text-lg text-foreground tracking-tight hidden sm:inline">
             Savia Sabia
           </span>
         </Link>
@@ -65,8 +65,8 @@ export function SiteHeader() {
               className={cn(
                 'px-3.5 py-2 text-sm font-medium rounded-full transition-colors',
                 isActive(link.match)
-                  ? 'bg-secondary text-cream'
-                  : 'text-muted-foreground hover:text-cream hover:bg-secondary/60'
+                  ? 'bg-secondary text-secondary-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               )}
             >
               {t(link.key)}
@@ -91,7 +91,7 @@ export function SiteHeader() {
             <span className={cn('transition-opacity', language === 'es' ? 'opacity-100' : 'opacity-50')}>ES</span>
           </button>
 
-          <Button asChild variant="ghost" size="icon" className="relative text-cream hover:bg-secondary/60" aria-label={t('shop.view_cart')}>
+          <Button asChild variant="ghost" size="icon" className="relative text-foreground hover:bg-secondary" aria-label={t('shop.view_cart')}>
             <Link href="/?view=cart">
               <ShoppingBag className="size-5" />
               {totalItems > 0 && (
@@ -105,13 +105,13 @@ export function SiteHeader() {
           {/* Menú móvil */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden text-cream hover:bg-secondary/60" aria-label={t('nav.menu')}>
+              <Button variant="ghost" size="icon" className="md:hidden text-foreground hover:bg-secondary" aria-label={t('nav.menu')}>
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="bg-background border-border w-72">
               <SheetHeader>
-                <SheetTitle className="font-serif text-cream text-left">Savia Sabia</SheetTitle>
+                <SheetTitle className="font-serif text-foreground text-left">Savia Sabia</SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 px-4 pb-6">
                 {navLinks.map((link) => (
@@ -121,8 +121,8 @@ export function SiteHeader() {
                       className={cn(
                         'px-3 py-3 text-base font-medium rounded-lg transition-colors',
                         isActive(link.match)
-                          ? 'bg-secondary text-cream'
-                          : 'text-muted-foreground hover:text-cream hover:bg-secondary/60'
+                          ? 'bg-secondary text-secondary-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                       )}
                     >
                       {t(link.key)}

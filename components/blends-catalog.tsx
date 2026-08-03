@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { blends, herbs, type Blend } from '@/lib/herbs-data'
+import { blends, herbs, type Blend, type BlendId } from '@/lib/herbs-data'
 import { useCart, formatPrice, productVariants, type ProductVariant } from '@/lib/cart-context'
 import { useLanguage } from '@/lib/language-context'
+import { useStock } from '@/lib/stock-context'
 
 interface BlendsCatalogProps {
   onBack: () => void
@@ -20,12 +21,13 @@ interface BlendsCatalogProps {
 export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogProps) {
   const [expandedBlend, setExpandedBlend] = useState<string | null>(null)
   const [selectedVariants, setSelectedVariants] = useState<Record<string, ProductVariant>>(
-    // Default to 10g bag for all blends
+    // Default to ½ oz loose blend for all blends
     Object.fromEntries(blends.map(b => [b.id, productVariants[0]]))
   )
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set())
   const { addToCart, getTotalItems } = useCart()
   const { t, language } = useLanguage()
+  const { getStock, isLoading: stockLoading } = useStock()
   
   const getHerbById = (id: string) => herbs.find(h => h.id === id)
   
@@ -126,6 +128,11 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
             const selectedVariant = selectedVariants[blend.id]
             const itemKey = `${blend.id}-${selectedVariant.size}`
             const justAdded = addedItems.has(itemKey)
+            const allVariantsOutOfStock = !stockLoading && productVariants.every(
+              v => getStock(blend.id as BlendId, v.size) === 0
+            )
+            const selectedVariantStock = getStock(blend.id as BlendId, selectedVariant.size)
+            const isSelectedOos = !stockLoading && selectedVariantStock === 0
             
             return (
               <motion.div
@@ -136,6 +143,13 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
               >
                 <Card className="overflow-hidden border-border hover:border-primary/30 transition-colors">
                   <div className={cn('h-1.5 bg-gradient-to-r', blend.color)} />
+                  {allVariantsOutOfStock && (
+                    <div className="bg-destructive/10 border-b border-destructive/20 px-4 py-1.5 flex items-center justify-end">
+                      <Badge variant="destructive" className="text-xs">
+                        {language === 'es' ? 'Agotado' : 'Out of stock'}
+                      </Badge>
+                    </div>
+                  )}
                   <CardContent className="p-0">
                     {/* Blend Header - Clickable */}
                     <button
@@ -285,21 +299,41 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                           {t('shop.loose_herbs')}
                         </div>
                         <div className="flex gap-2">
-                          {bagVariants.map((variant) => (
-                            <button
-                              key={variant.size}
-                              onClick={() => handleVariantChange(blend.id, variant)}
-                              className={cn(
-                                "flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
-                                selectedVariant.size === variant.size
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border bg-background text-foreground hover:border-primary/50"
-                              )}
-                            >
-                              <div>{variant.label[language]}</div>
-                              <div className="text-xs opacity-70">{formatPrice(variant.price)}</div>
-                            </button>
-                          ))}
+                          {bagVariants.map((variant) => {
+                            const vStock = getStock(blend.id as BlendId, variant.size)
+                            const isOos = !stockLoading && vStock === 0
+                            return (
+                              <button
+                                key={variant.size}
+                                onClick={() => !isOos && handleVariantChange(blend.id, variant)}
+                                disabled={isOos}
+                                className={cn(
+                                  "flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
+                                  isOos
+                                    ? "border-border bg-muted text-muted-foreground opacity-60 cursor-not-allowed"
+                                    : selectedVariant.size === variant.size
+                                      ? "border-primary bg-primary/10 text-primary"
+                                      : "border-border bg-background text-foreground hover:border-primary/50"
+                                )}
+                              >
+                                <div>{variant.label[language]}</div>
+                                {isOos ? (
+                                  <div className="text-xs opacity-70">
+                                    {language === 'es' ? 'Agotado' : 'Out of stock'}
+                                  </div>
+                                ) : (
+                                  <div className="text-xs opacity-70">
+                                    {formatPrice(variant.price)}
+                                    {!stockLoading && vStock > 0 && vStock <= 3 && (
+                                      <span className="ml-1 text-amber-600">
+                                        ({language === 'es' ? `Últ. ${vStock}` : `Last ${vStock}`})
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </button>
+                            )
+                          })}
                         </div>
                       </div>
 
@@ -308,24 +342,44 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                           {t('shop.cigarettes')}
                         </div>
                         <div className="flex gap-2">
-                          {cigaretteVariants.map((variant) => (
-                            <button
-                              key={variant.size}
-                              onClick={() => handleVariantChange(blend.id, variant)}
-                              className={cn(
-                                "flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
-                                selectedVariant.size === variant.size
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border bg-background text-foreground hover:border-primary/50"
-                              )}
-                            >
-                              <div>{variant.label[language]}</div>
-                              <div className="text-xs opacity-70">{formatPrice(variant.price)}</div>
-                            </button>
-                          ))}
+                          {cigaretteVariants.map((variant) => {
+                            const vStock = getStock(blend.id as BlendId, variant.size)
+                            const isOos = !stockLoading && vStock === 0
+                            return (
+                              <button
+                                key={variant.size}
+                                onClick={() => !isOos && handleVariantChange(blend.id, variant)}
+                                disabled={isOos}
+                                className={cn(
+                                  "flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
+                                  isOos
+                                    ? "border-border bg-muted text-muted-foreground opacity-60 cursor-not-allowed"
+                                    : selectedVariant.size === variant.size
+                                      ? "border-primary bg-primary/10 text-primary"
+                                      : "border-border bg-background text-foreground hover:border-primary/50"
+                                )}
+                              >
+                                <div>{variant.label[language]}</div>
+                                {isOos ? (
+                                  <div className="text-xs opacity-70">
+                                    {language === 'es' ? 'Agotado' : 'Out of stock'}
+                                  </div>
+                                ) : (
+                                  <div className="text-xs opacity-70">
+                                    {formatPrice(variant.price)}
+                                    {!stockLoading && vStock > 0 && vStock <= 3 && (
+                                      <span className="ml-1 text-amber-600">
+                                        ({language === 'es' ? `Últ. ${vStock}` : `Last ${vStock}`})
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </button>
+                            )
+                          })}
                         </div>
                       </div>
-                      
+
                       {/* Add to Cart Button */}
                       <div className="flex items-center justify-between pt-2">
                         <div>
@@ -336,14 +390,14 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                             / {selectedVariant.label[language]}
                           </span>
                         </div>
-                        
+
                         <Button
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleAddToCart(blend)
                           }}
-                          disabled={justAdded}
+                          disabled={justAdded || isSelectedOos}
                           className={cn(
                             "gap-1.5 transition-all",
                             justAdded && "bg-green-600 hover:bg-green-600"
@@ -354,6 +408,8 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                               <Check className="size-4" />
                               {t('shop.added')}
                             </>
+                          ) : isSelectedOos ? (
+                            <>{language === 'es' ? 'Agotado' : 'Out of stock'}</>
                           ) : (
                             <>
                               <ShoppingCart className="size-4" />

@@ -23,7 +23,7 @@ export function ContactoContent() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-2xl"
       >
-        <h1 className="font-serif font-bold text-cream text-4xl md:text-5xl mb-3 text-balance">
+        <h1 className="font-serif font-bold text-foreground text-4xl md:text-5xl mb-3 text-balance">
           {c.header[language]}
         </h1>
         <p className="text-muted-foreground mb-12">{c.subheader[language]}</p>
@@ -38,14 +38,14 @@ export function ContactoContent() {
                   <div className="flex items-start gap-3">
                     <Icon className="size-5 text-accent mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-cream">{label}</p>
-                      <p className="text-sm text-cream/80">{channel.value}</p>
+                      <p className="font-semibold text-foreground">{label}</p>
+                      <p className="text-sm text-foreground/80">{channel.value}</p>
                       <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-sm">
                         {channel.note[language]}
                       </p>
                     </div>
                   </div>
-                  <Button asChild size="sm" variant="outline" className="shrink-0 bg-transparent border-cream/25 text-cream hover:bg-cream/10 hover:text-cream">
+                  <Button asChild size="sm" variant="outline" className="shrink-0 border-border text-foreground hover:bg-secondary">
                     <a href={channel.href} target="_blank" rel="noopener noreferrer">
                       {channel.cta[language]}
                     </a>
@@ -60,7 +60,7 @@ export function ContactoContent() {
           <div className="flex gap-3">
             <Clock className="size-5 text-accent mt-0.5 shrink-0" />
             <div>
-              <h3 className="text-cream font-semibold mb-1">{c.hoursTitle[language]}</h3>
+              <h3 className="text-foreground font-semibold mb-1">{c.hoursTitle[language]}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{c.hours[language]}</p>
             </div>
           </div>
@@ -68,15 +68,15 @@ export function ContactoContent() {
           <div className="flex gap-3">
             <MapPin className="size-5 text-accent mt-0.5 shrink-0" />
             <div>
-              <h3 className="text-cream font-semibold mb-1">{c.pickupTitle[language]}</h3>
-              <p className="text-sm text-cream/90 mb-1">{c.pickupPlace}</p>
+              <h3 className="text-foreground font-semibold mb-1">{c.pickupTitle[language]}</h3>
+              <p className="text-sm text-foreground/90 mb-1">{c.pickupPlace}</p>
               <p className="text-sm text-muted-foreground leading-relaxed">{c.pickup[language]}</p>
             </div>
           </div>
         </div>
 
         <div className="mt-14 border-t border-border pt-8">
-          <h3 className="text-cream font-semibold mb-2">{c.wholesaleTitle[language]}</h3>
+          <h3 className="text-foreground font-semibold mb-2">{c.wholesaleTitle[language]}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{c.wholesale[language]}</p>
         </div>
       </motion.div>

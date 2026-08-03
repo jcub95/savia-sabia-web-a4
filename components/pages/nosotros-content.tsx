@@ -15,7 +15,7 @@ export function NosotrosContent() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-2xl"
       >
-        <h1 className="font-serif font-bold text-cream text-4xl md:text-5xl text-balance mb-8 leading-tight">
+        <h1 className="font-serif font-bold text-foreground text-4xl md:text-5xl text-balance mb-8 leading-tight">
           {nosotrosContent.header[language]}
         </h1>
 
@@ -23,7 +23,7 @@ export function NosotrosContent() {
           {nosotrosContent.intro[language]}
         </p>
 
-        <p className="text-cream font-serif italic text-lg mb-4">
+        <p className="text-foreground font-serif italic text-lg mb-4">
           {language === 'es' ? 'Somos dos.' : 'There are two of us.'}
         </p>
 
@@ -31,7 +31,7 @@ export function NosotrosContent() {
           {nosotrosContent.team.map((person) => (
             <div key={person.name} className="border-l-2 border-accent/40 pl-5">
               <p className="text-muted-foreground leading-relaxed">
-                <span className="font-semibold text-cream">{person.name}</span>{' '}
+                <span className="font-semibold text-foreground">{person.name}</span>{' '}
                 {person.role[language]}
               </p>
             </div>
@@ -42,14 +42,14 @@ export function NosotrosContent() {
           {nosotrosContent.sourcing[language]}
         </p>
 
-        <h2 className="font-serif font-semibold text-cream text-2xl md:text-3xl mb-8">
+        <h2 className="font-serif font-semibold text-foreground text-2xl md:text-3xl mb-8">
           {nosotrosContent.valuesTitle[language]}
         </h2>
 
         <div className="space-y-7 mb-14">
           {nosotrosContent.values.map((value) => (
             <div key={value.title[language]}>
-              <h3 className="text-cream font-semibold mb-1.5">{value.title[language]}</h3>
+              <h3 className="text-foreground font-semibold mb-1.5">{value.title[language]}</h3>
               <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                 {value.body[language]}
               </p>
