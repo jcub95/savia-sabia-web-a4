@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sheet'
 import { useLanguage } from '@/lib/language-context'
 import { useCart } from '@/lib/cart-context'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
 
 // Rutas reales (páginas de soporte) + puentes de query-param hacia la SPA en
@@ -45,11 +46,14 @@ export function SiteHeader() {
         {/* Logo + wordmark → siempre vuelve al inicio */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setMobileOpen(false)}>
           <img
-            src="/SaviaSabia_logo_color_transparente.png"
+            src="/SaviaSabia_logo_color_transparente.svg"
             alt="Savia Sabia"
-            width={28}
-            height={46}
-            className="h-10 w-auto"
+            className="h-10 w-auto dark:hidden"
+          />
+          <img
+            src="/SaviaSabia_logo_invertido_transparente.svg"
+            alt="Savia Sabia"
+            className="h-10 w-auto hidden dark:block"
           />
           <span className="font-serif font-bold text-lg text-foreground tracking-tight hidden sm:inline">
             Savia Sabia
@@ -90,6 +94,8 @@ export function SiteHeader() {
             <span className="text-muted-foreground">/</span>
             <span className={cn('transition-opacity', language === 'es' ? 'opacity-100' : 'opacity-50')}>ES</span>
           </button>
+
+          <ThemeToggle />
 
           <Button asChild variant="ghost" size="icon" className="relative text-foreground hover:bg-secondary" aria-label={t('shop.view_cart')}>
             <Link href="/?view=cart">

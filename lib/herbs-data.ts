@@ -10,6 +10,7 @@ const p = (en: string): LocalizedString => ({ en, es: en })
 export interface Herb {
   id: string
   name: LocalizedString
+  scientificName: string   // nombre botánico, no se traduce
   category: 'calming' | 'energizing' | 'respiratory' | 'aromatic' | 'balancing'
   benefits: LocalizedString[]
   effects: LocalizedString
@@ -25,6 +26,7 @@ export const herbs: Herb[] = [
   {
     id: 'thyme',
     name: { en: 'Thyme', es: 'Tomillo' },
+    scientificName: 'Thymus vulgaris',
     category: 'respiratory',
     benefits: [
       { en: 'Respiratory support', es: 'Desinfectante pulmonar' },
@@ -54,6 +56,7 @@ export const herbs: Herb[] = [
   {
     id: 'mullein',
     name: { en: 'Mullein', es: 'Gordolobo' },
+    scientificName: 'Verbascum thapsus',
     category: 'respiratory',
     benefits: [
       { en: 'Lung cleansing',  es: 'Expectorante natural' },
@@ -83,6 +86,7 @@ export const herbs: Herb[] = [
   {
     id: 'lemon-balm',
     name: { en: 'Lemon Balm', es: 'Melisa' },
+    scientificName: 'Melissa officinalis',
     category: 'calming',
     benefits: [
       { en: 'Stress relief', es: 'Alivio del estrés' },
@@ -112,6 +116,7 @@ export const herbs: Herb[] = [
   {
     id: 'chamomile',
     name: { en: 'Chamomile', es: 'Manzanilla' },
+    scientificName: 'Matricaria chamomilla',
     category: 'calming',
     benefits: [
       { en: 'Deep relaxation', es: 'Relajación profunda' },
@@ -141,6 +146,7 @@ export const herbs: Herb[] = [
   {
     id: 'pericorn',
     name: { en: 'Pericón', es: 'Pericón' },
+    scientificName: 'Tagetes lucida',
     category: 'energizing',
     benefits: [
       { en: 'Mental stimulation', es: 'Relajante digestivo' },
@@ -170,6 +176,7 @@ export const herbs: Herb[] = [
   {
     id: 'damiana',
     name: { en: 'Damiana', es: 'Damiana' },
+    scientificName: 'Turnera diffusa',
     category: 'balancing',
     benefits: [
       { en: 'Mood elevation', es: 'Eleva el ánimo' },
@@ -199,6 +206,7 @@ export const herbs: Herb[] = [
   {
     id: 'lavender',
     name: { en: 'Lavender', es: 'Lavanda' },
+    scientificName: 'Lavandula angustifolia',
     category: 'calming',
     benefits: [
       { en: 'Anxiety relief',     es: 'Reduce el cortisol' },
@@ -228,6 +236,7 @@ export const herbs: Herb[] = [
   {
     id: 'roses',
     name: { en: 'Roses', es: 'Rosas' },
+    scientificName: 'Rosa spp.',
     category: 'aromatic',
     benefits: [
       { en: 'Heart opening', es: 'Equilibrio emocional' },
@@ -257,6 +266,7 @@ export const herbs: Herb[] = [
   {
     id: 'calendula',
     name: { en: 'Calendula', es: 'Caléndula' },
+    scientificName: 'Calendula officinalis',
     category: 'balancing',
     benefits: [
       { en: 'Skin health', es: 'Quemado parejo' },
@@ -286,6 +296,7 @@ export const herbs: Herb[] = [
   {
     id: 'rosemary',
     name: { en: 'Rosemary', es: 'Romero' },
+    scientificName: 'Rosmarinus officinalis',
     category: 'energizing',
     benefits: [
       { en: 'Memory enhancement', es: 'Mejora la concentración' },
@@ -315,6 +326,7 @@ export const herbs: Herb[] = [
   {
     id: 'eucalyptus',
     name: { en: 'Eucalyptus', es: 'Eucalipto' },
+    scientificName: 'Eucalyptus globulus',
     category: 'respiratory',
     benefits: [
       { en: 'Airway clearing', es: 'Abre las vías aéreas' },
@@ -344,6 +356,7 @@ export const herbs: Herb[] = [
   {
     id: 'jasmine',
     name: { en: 'Jasmine', es: 'Jazmín' },
+    scientificName: 'Jasminum officinale',
     category: 'aromatic',
     benefits: [
       { en: 'Mood uplift', es: 'Perfuma el ambiente' },
@@ -373,6 +386,7 @@ export const herbs: Herb[] = [
   {
     id: 'mint',
     name: { en: 'Mint', es: 'Menta' },
+    scientificName: 'Satureja viminea',
     category: 'respiratory',
     benefits: [
       { en: 'Respiratory clearing', es: 'Frescura real' },
@@ -402,6 +416,7 @@ export const herbs: Herb[] = [
   {
     id: 'passionflower',
     name: { en: 'Passionflower', es: 'Pasiflora' },
+    scientificName: 'Passiflora incarnata',
     category: 'calming',
     benefits: [
       { en: 'Deep relaxation', es: 'Apaga el ruido mental' },
@@ -431,6 +446,7 @@ export const herbs: Herb[] = [
   {
     id: 'sage',
     name: { en: 'Sage', es: 'Salvia' },
+    scientificName: 'Salvia officinalis',
     category: 'balancing',
     benefits: [
       { en: 'Mental clarity', es: 'Limpia tejidos respiratorios' },

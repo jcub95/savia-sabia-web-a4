@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/lib/language-context'
 import { CartProvider } from '@/lib/cart-context'
 import { StockProvider } from '@/lib/stock-context'
+import { ThemeProvider } from '@/components/theme-provider'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { AgeGate } from '@/components/age-gate'
@@ -47,7 +48,10 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#FAF7EE',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAF7EE' },
+    { media: '(prefers-color-scheme: dark)',  color: '#1C4A2A' },
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -60,19 +64,26 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${plexSerif.variable} ${inter.variable} bg-background`}>
+    <html lang="es" suppressHydrationWarning className={`${plexSerif.variable} ${inter.variable} bg-background`}>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <LanguageProvider>
-          <CartProvider>
-            <StockProvider>
-              <SiteHeader />
-              <div className="flex-1">{children}</div>
-              <SiteFooter />
-              <AgeGate />
-              <WhatsAppFloat />
-            </StockProvider>
-          </CartProvider>
-        </LanguageProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <LanguageProvider>
+            <CartProvider>
+              <StockProvider>
+                <SiteHeader />
+                <div className="flex-1">{children}</div>
+                <SiteFooter />
+                <AgeGate />
+                <WhatsAppFloat />
+              </StockProvider>
+            </CartProvider>
+          </LanguageProvider>
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

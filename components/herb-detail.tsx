@@ -49,19 +49,24 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div className={cn(
-        'relative bg-gradient-to-br pt-4 pb-20',
+        'relative overflow-hidden bg-gradient-to-br pt-4 pb-20',
         herb.color
       )}>
-        <div className="max-w-lg mx-auto px-4">
+        {/* Scrim — garantiza contraste en los 15 gradientes y ambos temas */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/45 to-black/25"
+          aria-hidden="true"
+        />
+        <div className="relative z-10 max-w-lg mx-auto px-4">
           <Button
             variant="ghost"
             onClick={onBack}
-            className="mb-6 text-primary-foreground hover:bg-white/20"
+            className="mb-6 text-[#FAF7EE] hover:bg-white/20"
           >
             <ArrowLeft className="size-4 mr-1" />
             {t('nav.back')}
           </Button>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,10 +84,13 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
                 className="w-full h-full object-contain"
               />
             </motion.div>
-            <h1 className="font-serif text-4xl font-bold text-primary-foreground mb-2">
+            <h1 className="font-serif text-4xl font-bold text-[#FAF7EE] mb-2">
               {herb.name[language]}
             </h1>
-            <Badge className="bg-white/20 text-primary-foreground border-0">
+            <p className="font-serif italic text-base text-[#FAF7EE]/75 -mt-1 mb-4">
+              {herb.scientificName}
+            </p>
+            <Badge className="bg-white/20 text-[#FAF7EE] border-0">
               <CategoryIcon className="size-3 mr-1" />
               {categoryLabels[cat][language]}
             </Badge>
@@ -238,10 +246,10 @@ export function HerbDetail({ herb, onBack }: HerbDetailProps) {
             <CardContent className="p-5">
               <div className="flex items-center gap-3 mb-2">
                 <div className={cn(
-                  'size-10 rounded-full bg-gradient-to-br flex items-center justify-center',
+                  'size-10 rounded-full bg-gradient-to-br flex items-center justify-center ring-1 ring-black/10 dark:ring-white/15',
                   herb.color
                 )}>
-                  <CategoryIcon className="size-5 text-primary-foreground" />
+                  <CategoryIcon className="size-5 text-[#FAF7EE]" />
                 </div>
                 <div>
                   <h3 className="font-serif font-semibold text-foreground">

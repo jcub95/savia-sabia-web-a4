@@ -87,12 +87,20 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
             transition={{ duration: 0.6 }}
           >
             <motion.img
-              src="/SaviaSabia_logo_color_transparente.png"
+              src="/SaviaSabia_logo_color_transparente.svg"
               alt="Savia Sabia"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7 }}
-              className="w-32 md:w-40 h-auto mx-auto mb-8"
+              className="w-32 md:w-40 h-auto mx-auto mb-8 dark:hidden"
+            />
+            <motion.img
+              src="/SaviaSabia_logo_invertido_transparente.svg"
+              alt="Savia Sabia"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7 }}
+              className="w-32 md:w-40 h-auto mx-auto mb-8 hidden dark:block"
             />
 
             <h1 className="font-serif font-bold text-5xl md:text-7xl lg:text-8xl text-foreground leading-tight tracking-tight mb-6">
@@ -222,19 +230,18 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
       {/* ═══════════════════════════════════════
           BANNER DEL QUIZ
       ═══════════════════════════════════════ */}
-      <section className="bg-primary text-primary-foreground">
+      <section className="bg-anchor text-anchor-foreground">
         <div className="max-w-4xl mx-auto px-4 py-16 md:py-20 text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-3">
             {t.quizBannerTitle}
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-anchor-foreground/80 text-lg mb-8 max-w-xl mx-auto">
             {t.quizBannerBody}
           </p>
           <Button
             onClick={onStartSurvey}
             size="lg"
-            variant="secondary"
-            className="h-14 px-8 text-base font-medium"
+            className="h-14 px-8 text-base font-medium bg-anchor-foreground text-anchor hover:bg-anchor-foreground/90"
           >
             <Sparkles className="size-5 mr-2" />
             {t.quizBannerCta}

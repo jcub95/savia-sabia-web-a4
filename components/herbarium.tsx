@@ -162,7 +162,10 @@ export function Herbarium({ onBack, onGoHome }: HerbariumProps) {
                   <h3 className="font-serif font-semibold text-foreground mb-1">
                     {herb.name[language]}
                   </h3>
-                  <Badge variant="secondary" className="text-xs">
+                  <p className="font-serif italic text-xs text-muted-foreground/70">
+                    {herb.scientificName}
+                  </p>
+                  <Badge variant="secondary" className="text-xs border border-border">
                     {categoryLabels[herb.category as HerbCategory]?.[language] ?? herb.category}
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
