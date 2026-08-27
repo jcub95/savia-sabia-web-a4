@@ -136,6 +136,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 6. Insert order
+  const isEnvio = form.deliveryType === 'envio'
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert({
@@ -147,6 +148,13 @@ export async function POST(req: NextRequest) {
       total_q: totals.totalQ,
       notes: form.notes?.trim() || null,
       status: 'pendiente',
+      // Snapshot — frozen at order time, never synced with customers/addresses
+      contact_name: form.name.trim(),
+      contact_phone: form.phone.replace(/[\s\-]/g, ''),
+      contact_email: form.email.trim().toLowerCase(),
+      ship_department: isEnvio ? form.department : null,
+      ship_municipio: isEnvio ? form.municipio.trim() : null,
+      ship_address_line: isEnvio ? form.addressLine.trim() : null,
     })
     .select('id, order_number')
     .single()
