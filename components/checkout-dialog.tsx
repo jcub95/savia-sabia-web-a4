@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Check as CheckIcon, Loader2, ArrowLeft, MessageCircle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -81,6 +82,9 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
   const [success, setSuccess] = useState<SuccessData | null>(null)
   const [apiError, setApiError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
+
+  const ageCheckboxRef = useRef<HTMLDivElement>(null)
 
   // Cart-derived values (cents → quetzales)
   const subtotalQ = getTotalPrice() / 100
@@ -100,6 +104,7 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
         setSuccess(null)
         setApiError(null)
         setIsSubmitting(false)
+        setSubmitAttempted(false)
       }, 300)
       return () => clearTimeout(timer)
     }
@@ -138,14 +143,25 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
   }
 
   const handleSubmit = async () => {
+    setSubmitAttempted(true)
+
     const allTouched = Object.fromEntries(
-      Object.keys(DEFAULT_FORM).map(k => [k, true])
+      Object.keys(DEFAULT_FORM)
+        .filter(k => k !== 'ageConfirmed')
+        .map(k => [k, true])
     ) as Record<keyof CheckoutFormData, boolean>
     setTouched(allTouched)
 
     const allErrors = validateCheckout(form, language)
     setErrors(allErrors)
-    if (Object.keys(allErrors).length > 0) return
+    if (Object.keys(allErrors).length > 0) {
+      if (allErrors.ageConfirmed && ageCheckboxRef.current) {
+        setTimeout(() => {
+          ageCheckboxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }, 50)
+      }
+      return
+    }
 
     setIsSubmitting(true)
     setApiError(null)
@@ -242,6 +258,11 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
               ? (es ? '¡Pedido generado!' : 'Order placed!')
               : (es ? 'Confirmar pedido' : 'Confirm order')}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {es
+              ? 'Formulario para completar tu pedido: datos de contacto, entrega y pago.'
+              : 'Form to complete your order: contact details, delivery and payment.'}
+          </DialogDescription>
 
           {!success && (
             <div className="flex items-center gap-3 mt-3">
@@ -575,15 +596,16 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
                 </div>
 
                 {/* Age confirmation */}
-                <div className="flex items-start gap-3 pt-1">
+                <div ref={ageCheckboxRef} className="flex items-start gap-3 pt-1">
                   <Checkbox
                     id="co-age"
                     checked={form.ageConfirmed}
                     onCheckedChange={checked => {
                       handleField('ageConfirmed', checked === true)
-                      setTouched(prev => ({ ...prev, ageConfirmed: true }))
                     }}
-                    className={cn(showError('ageConfirmed') && 'border-destructive')}
+                    aria-invalid={submitAttempted && !form.ageConfirmed}
+                    aria-describedby={!form.ageConfirmed ? 'co-age-desc' : undefined}
+                    className={cn(submitAttempted && !form.ageConfirmed && 'border-destructive')}
                   />
                   <div>
                     <label
@@ -594,9 +616,17 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
                         ? 'Confirmo que soy mayor de 18 años.'
                         : 'I confirm I am 18 years of age or older.'}
                     </label>
-                    {showError('ageConfirmed') && (
-                      <p className="text-xs text-destructive mt-1">
-                        {showError('ageConfirmed')}
+                    {!form.ageConfirmed && (
+                      <p
+                        id="co-age-desc"
+                        className={cn(
+                          'text-xs mt-1',
+                          submitAttempted ? 'text-destructive' : 'text-muted-foreground'
+                        )}
+                      >
+                        {submitAttempted
+                          ? (es ? 'Debes confirmar que eres mayor de 18 años.' : 'You must confirm you are 18 or older.')
+                          : (es ? 'Requerido para completar tu pedido.' : 'Required to complete your order.')}
                       </p>
                     )}
                   </div>

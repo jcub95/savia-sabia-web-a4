@@ -50,12 +50,15 @@ export async function POST(req: NextRequest) {
   const skus = items.map(i => i.sku)
   const { data: products, error: productError } = await supabase
     .from('products')
-    .select('sku, price_q, stock, active')
+    .select('sku, price_q, stock, is_active')
     .in('sku', skus)
 
   if (productError) {
-    console.error('Product fetch error:', productError)
-    return NextResponse.json({ error: 'Error fetching products' }, { status: 500 })
+    console.error('Product fetch error:', { code: productError.code, message: productError.message, details: productError.details, hint: productError.hint })
+    return NextResponse.json({
+      error: 'Error fetching products',
+      ...(process.env.NODE_ENV !== 'production' && { debug: productError }),
+    }, { status: 500 })
   }
 
   if (!products || products.length === 0) {
@@ -66,7 +69,7 @@ export async function POST(req: NextRequest) {
 
   for (const item of items) {
     const product = productMap.get(item.sku)
-    if (!product || product.active === false) {
+    if (!product || product.is_active === false) {
       return NextResponse.json(
         { error: `Product not found: ${item.sku}` },
         { status: 400 }
@@ -100,8 +103,11 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (customerError || !customer) {
-    console.error('Customer insert error:', customerError)
-    return NextResponse.json({ error: 'Error creating customer' }, { status: 500 })
+    console.error('Customer insert error:', { code: customerError?.code, message: customerError?.message, details: customerError?.details, hint: customerError?.hint })
+    return NextResponse.json({
+      error: 'Error creating customer',
+      ...(process.env.NODE_ENV !== 'production' && { debug: customerError }),
+    }, { status: 500 })
   }
 
   // 5. Insert address if envio
@@ -120,8 +126,11 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (addressError || !address) {
-      console.error('Address insert error:', addressError)
-      return NextResponse.json({ error: 'Error creating address' }, { status: 500 })
+      console.error('Address insert error:', { code: addressError?.code, message: addressError?.message, details: addressError?.details, hint: addressError?.hint })
+      return NextResponse.json({
+        error: 'Error creating address',
+        ...(process.env.NODE_ENV !== 'production' && { debug: addressError }),
+      }, { status: 500 })
     }
     addressId = address.id
   }
@@ -143,8 +152,11 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (orderError || !order) {
-    console.error('Order insert error:', orderError)
-    return NextResponse.json({ error: 'Error creating order' }, { status: 500 })
+    console.error('Order insert error:', { code: orderError?.code, message: orderError?.message, details: orderError?.details, hint: orderError?.hint })
+    return NextResponse.json({
+      error: 'Error creating order',
+      ...(process.env.NODE_ENV !== 'production' && { debug: orderError }),
+    }, { status: 500 })
   }
 
   // 7. Insert order items
@@ -160,7 +172,7 @@ export async function POST(req: NextRequest) {
     .insert(orderItemsData)
 
   if (itemsError) {
-    console.error('Order items insert error:', itemsError)
+    console.error('Order items insert error:', { code: itemsError.code, message: itemsError.message, details: itemsError.details, hint: itemsError.hint })
     // Order exists — log and continue
   }
 
