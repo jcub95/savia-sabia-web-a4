@@ -52,8 +52,8 @@ export const nosotrosContent = {
   ],
 
   sourcing: {
-    en: `We work with locally sourced, organic herbs, including our own family harvest. We use unbleached papers and packaging. No chemical additives, no artificial flavoring, no preservatives.`,
-    es: `Trabajamos con hierbas de origen local y orgánico, incluyendo cosecha familiar propia. Usamos papeles y empaques sin blanquear. No agregamos aditivos químicos, ni saborizantes artificiales, ni conservantes.`,
+    en: `We work with locally sourced, organic herbs, including our own family harvest. We use unbleached papers and packaging. No chemical additives, no artificial flavoring, no preservatives. The entire process is manual: preparing the herbs, formulating each blend, and rolling every single cigarette.`,
+    es: `Trabajamos con hierbas de origen local y orgánico, incluyendo cosecha familiar propia. Usamos papeles y empaques sin blanquear. No agregamos aditivos químicos, ni saborizantes artificiales, ni conservantes. Todo el proceso es manual: la preparación de las hierbas, la formulación de cada mezcla y el forjado de cada cigarrillo.`,
   } satisfies LocalizedString,
 
   valuesTitle: {
@@ -309,6 +309,16 @@ export const faqCategories: FaqCategory[] = [
         a: {
           en: 'Yes. Our products are strictly for adults 18 and over.',
           es: 'Sí. Nuestros productos son exclusivamente para mayores de 18 años.',
+        },
+      },
+      {
+        q: {
+          es: '¿Por qué mis cigarrillos no se ven todos iguales?',
+          en: 'Why do my cigarettes look slightly different from each other?',
+        },
+        a: {
+          es: 'Porque los forjamos a mano, uno por uno. No usamos máquina ni línea de producción, así que puede haber pequeñas diferencias de grosor y firmeza entre unidades. Lo que sí mantenemos constante es la cantidad de mezcla por cigarrillo: lo que varía es la forma, no el contenido.',
+          en: 'Because we roll them by hand, one at a time. There is no machine and no production line, so slight differences in thickness and firmness between units are normal. What we do keep constant is the amount of blend per cigarette: what varies is the shape, not the contents.',
         },
       },
     ],

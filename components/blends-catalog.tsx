@@ -380,6 +380,14 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                         </div>
                       </div>
 
+                      {selectedVariant.type === 'cigarettes' && (
+                        <p className="text-xs text-muted-foreground/70 leading-relaxed mt-3">
+                          {language === 'es'
+                            ? 'Forjados a mano: puede haber pequeñas variaciones de grosor entre unidades. La cantidad de mezcla por cigarrillo se mantiene constante.'
+                            : 'Hand-rolled: slight variations in thickness between units are normal. The amount of blend per cigarette stays constant.'}
+                        </p>
+                      )}
+
                       {/* Add to Cart Button */}
                       <div className="flex items-center justify-between pt-2">
                         <div>

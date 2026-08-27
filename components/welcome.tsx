@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Leaf, MapPin, Shield, ArrowRight, Sparkles } from 'lucide-react'
+import { Leaf, MapPin, Shield, ArrowRight, Sparkles, Hand } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/lib/language-context'
@@ -37,6 +37,9 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
       quizBannerTitle: '¿No sabes por cuál empezar?',
       quizBannerBody: 'Responde 6 preguntas y te decimos tu mezcla ideal.',
       quizBannerCta: 'Hacer el test',
+      handmadeTitle: 'Hecho a mano, uno por uno',
+      handmadeBody: 'Cada mezcla se prepara a mano: seleccionar la hierba, secarla, molerla al punto exacto, pesarla y combinarla en su proporción. Los cigarrillos se forjan uno a uno. No hay máquina, no hay línea de producción, no hay lote industrial. Hay un par de manos y una fórmula que se respeta.',
+      handmadeNote: 'Por eso no hay dos cigarrillos idénticos: puede haber pequeñas variaciones de grosor y firmeza. La cantidad de mezcla por unidad se mantiene constante — lo que cambia es la forma, no el contenido.',
       closingTitle: 'Honestidad radical',
       closingBody: 'Fumar cualquier material vegetal implica combustión y no es una actividad inocua. No decimos que nuestro humo sea saludable. Decimos que no lleva tabaco, ni nicotina, ni los cientos de químicos del cigarro industrial. La comparación honesta es esa.',
       closingLink: 'Conócenos',
@@ -60,6 +63,9 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
       quizBannerTitle: 'Not sure where to start?',
       quizBannerBody: "Answer 6 questions and we'll tell you your ideal blend.",
       quizBannerCta: 'Take the quiz',
+      handmadeTitle: 'Made by hand, one at a time',
+      handmadeBody: 'Every blend is prepared by hand: selecting the herb, drying it, grinding it to the right consistency, weighing it and combining it in proportion. Cigarettes are rolled one by one. No machine, no production line, no industrial batch. Just a pair of hands and a formula that gets respected.',
+      handmadeNote: 'That is why no two cigarettes are identical: there may be slight variations in thickness and firmness. The amount of blend per unit stays constant — what changes is the shape, not the contents.',
       closingTitle: 'Radical honesty',
       closingBody: "Smoking any plant material involves combustion and is not harmless. We won't say our smoke is healthy. We say it contains no tobacco, no nicotine, and none of the hundreds of chemicals in industrial cigarettes. That is the honest comparison.",
       closingLink: 'About us',
@@ -228,6 +234,35 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
       </section>
 
       {/* ═══════════════════════════════════════
+          HECHO A MANO
+      ═══════════════════════════════════════ */}
+      <section className="border-t border-border bg-secondary">
+        <div className="max-w-3xl mx-auto px-4 py-16 md:py-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <Hand className="size-7 text-primary" />
+            </div>
+
+            <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-6">
+              {t.handmadeTitle}
+            </h2>
+
+            <p className="text-muted-foreground leading-relaxed text-lg mb-8">
+              {t.handmadeBody}
+            </p>
+
+            <p className="text-sm text-muted-foreground/75 leading-relaxed max-w-xl mx-auto border-t border-border pt-6">
+              {t.handmadeNote}
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
           BANNER DEL QUIZ
       ═══════════════════════════════════════ */}
       <section className="bg-anchor text-anchor-foreground">
@@ -252,7 +287,7 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
       {/* ═══════════════════════════════════════
           CIERRE HONESTO
       ═══════════════════════════════════════ */}
-      <section className="border-t border-border bg-secondary">
+      <section className="border-t border-border bg-background">
         <div className="max-w-3xl mx-auto px-4 py-16 md:py-20 text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold text-foreground mb-4">
             {t.closingTitle}

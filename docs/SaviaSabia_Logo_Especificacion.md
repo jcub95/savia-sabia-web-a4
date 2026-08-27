@@ -1,6 +1,8 @@
 # Logo Oficial: Savia Sabia — Especificación Técnica
 
-Este documento describe el logo definitivo aprobado (versión final, julio 2026) para que cualquier IA o diseñador pueda referenciarlo, reproducirlo o derivar piezas sin ambigüedad. Complementa la filosofía "Botánica de Precisión" (`filosofia_diseno_logo.md`); aquí se especifica el resultado concreto.
+Este documento describe el logo definitivo aprobado (versión final, agosto 2026) para que cualquier IA o diseñador pueda referenciarlo, reproducirlo o derivar piezas sin ambigüedad. Complementa la filosofía "Botánica de Precisión" (`filosofia_diseno_logo.md`); aquí se especifica el resultado concreto.
+
+> **Revisión agosto 2026:** las variantes monotónica y monotónica invertida se simplificaron eliminando el keyline (halo de separación) que originalmente iba bajo la S salvia y el segmento de tejido. Las dos S ahora se funden en un cuerpo sólido continuo en esas dos variantes. Detalles en la sección 4.
 
 ---
 
@@ -54,7 +56,7 @@ Regla madre: *"las letras son la tierra, no el macetero"* — toda planta arraig
 |---|---|---|---|---|
 | Fondo | `#FAF7EE` crema | `#1C4A2A` | `#FAF7EE` | `#1C4A2A` |
 | S oscura | `#1C4A2A` | `#FAF7EE` crema | `#1C4A2A` | `#FAF7EE` crema |
-| S salvia | `#849C52` | `#96AC66` | `#1C4A2A` + keyline crema 7px | `#FAF7EE` crema + keyline verde 7px |
+| S salvia | `#849C52` | `#96AC66` | `#1C4A2A` | `#FAF7EE` crema |
 | Tallos / hojas | `#567646` / `#4A6C3E` | aclarados | `#1C4A2A` | `#FAF7EE` crema |
 | Rosa | relleno `#DFB0BA`, línea `#AC7080` | aclarados | relleno oscuro, detalle crema | relleno crema, detalle verde |
 | Caléndula | pétalos `#E29E3E`, centro `#A06020` | aclarados | oscuro, detalle crema | crema, detalle verde |
@@ -62,7 +64,9 @@ Regla madre: *"las letras son la tierra, no el macetero"* — toda planta arraig
 | Gordolobo | flores `#DBBD58`, hojas `#B2BE98` | aclarados | oscuro | crema |
 | Texto / lema | `#1C4A2A` / `#5A6B52` | crema / `#C4D0AC` | `#1C4A2A` | crema |
 
-En el **monotónico**, el tejido se mantiene legible mediante *keyline*: halo crema de +7px bajo cada trazo de la S salvia y del segmento de tejido. En el **monotónico invertido**, el mismo principio se aplica al revés: fondo verde `#1C4A2A`, todo el logo en crema `#FAF7EE`, y el keyline es un halo verde (color del fondo) de +7px que separa los trazos en los cruces. Esta cuarta variante es la indicada para colocar el logo sobre fondos verdes oscuros sólidos — por ejemplo, el hero de la landing page o cualquier superficie donde el logo a color no tenga suficiente contraste.
+En las variantes **monotónica** y **monotónica invertida**, las dos S y el segmento de tejido comparten el mismo color y se funden en un cuerpo sólido continuo — sin keyline, sin halo separador, sin línea de contorno. El entrelazado se lee por el gesto de la forma (los ganchos superior e inferior de cada S siguen siendo reconocibles) y por la presencia de la flora que emerge en puntos específicos, no por contraste tonal entre trazos.
+
+La cuarta variante — **monotónica invertida**, todo el logo en crema `#FAF7EE` sobre fondo verde `#1C4A2A` — es la indicada para colocar el logo sobre fondos verdes oscuros sólidos, por ejemplo el hero de la landing page o cualquier superficie donde el logo a color no tenga suficiente contraste.
 
 ---
 
