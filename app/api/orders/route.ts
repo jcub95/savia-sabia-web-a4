@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const skus = items.map(i => i.sku)
   const { data: products, error: productError } = await supabase
     .from('products')
-    .select('sku, price_q, stock, is_active')
+    .select('id, sku, price_q, stock, is_active')
     .in('sku', skus)
 
   if (productError) {
@@ -167,10 +167,10 @@ export async function POST(req: NextRequest) {
     }, { status: 500 })
   }
 
-  // 7. Insert order items
+  // 7. Insert order items (product_id links to products.id via FK)
   const orderItemsData = items.map(item => ({
     order_id: order.id,
-    sku: item.sku,
+    product_id: productMap.get(item.sku)!.id,
     quantity: item.quantity,
     unit_price_q: productMap.get(item.sku)!.price_q,
   }))
