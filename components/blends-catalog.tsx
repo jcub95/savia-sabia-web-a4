@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { blends, herbs, type Blend, type BlendId } from '@/lib/herbs-data'
 import { useCart, formatPrice, productVariants, type ProductVariant } from '@/lib/cart-context'
+import { maxPurchasable } from '@/lib/checkout-config'
 import { useLanguage } from '@/lib/language-context'
 import { useStock } from '@/lib/stock-context'
 
@@ -25,7 +26,7 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
     Object.fromEntries(blends.map(b => [b.id, productVariants[0]]))
   )
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set())
-  const { addToCart, getTotalItems } = useCart()
+  const { addToCart, getTotalItems, items: cartItems } = useCart()
   const { t, language } = useLanguage()
   const { getStock, isLoading: stockLoading } = useStock()
   
@@ -133,6 +134,14 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
             )
             const selectedVariantStock = getStock(blend.id as BlendId, selectedVariant.size)
             const isSelectedOos = !stockLoading && selectedVariantStock === 0
+            const cartQtyForVariant = cartItems.find(
+              i => i.blend.id === blend.id && i.variant.size === selectedVariant.size
+            )?.quantity ?? 0
+            const isAtMax = !stockLoading && selectedVariantStock > 0 &&
+              cartQtyForVariant >= maxPurchasable(selectedVariantStock)
+            const maxBuyable = !stockLoading && selectedVariantStock > 0
+              ? maxPurchasable(selectedVariantStock)
+              : 0
             
             return (
               <motion.div
@@ -324,7 +333,7 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                                 ) : (
                                   <div className="text-xs opacity-70">
                                     {formatPrice(variant.price)}
-                                    {!stockLoading && vStock > 0 && vStock <= 3 && (
+                                    {!stockLoading && vStock > 0 && vStock <= 2 && (
                                       <span className="ml-1 text-amber-600">
                                         ({language === 'es' ? `Últ. ${vStock}` : `Last ${vStock}`})
                                       </span>
@@ -367,7 +376,7 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                                 ) : (
                                   <div className="text-xs opacity-70">
                                     {formatPrice(variant.price)}
-                                    {!stockLoading && vStock > 0 && vStock <= 3 && (
+                                    {!stockLoading && vStock > 0 && vStock <= 2 && (
                                       <span className="ml-1 text-amber-600">
                                         ({language === 'es' ? `Últ. ${vStock}` : `Last ${vStock}`})
                                       </span>
@@ -389,42 +398,54 @@ export function BlendsCatalog({ onBack, onViewCart, onGoHome }: BlendsCatalogPro
                       )}
 
                       {/* Add to Cart Button */}
-                      <div className="flex items-center justify-between pt-2">
-                        <div>
-                          <span className="text-lg font-bold text-foreground">
-                            {formatPrice(selectedVariant.price)}
-                          </span>
-                          <span className="text-xs text-muted-foreground ml-1">
-                            / {selectedVariant.label[language]}
-                          </span>
+                      <div className="space-y-2 pt-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-lg font-bold text-foreground">
+                              {formatPrice(selectedVariant.price)}
+                            </span>
+                            <span className="text-xs text-muted-foreground ml-1">
+                              / {selectedVariant.label[language]}
+                            </span>
+                          </div>
+
+                          <Button
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleAddToCart(blend)
+                            }}
+                            disabled={justAdded || isSelectedOos || isAtMax}
+                            className={cn(
+                              "gap-1.5 transition-all",
+                              justAdded && "bg-green-600 hover:bg-green-600"
+                            )}
+                          >
+                            {justAdded ? (
+                              <>
+                                <Check className="size-4" />
+                                {t('shop.added')}
+                              </>
+                            ) : isSelectedOos ? (
+                              <>{language === 'es' ? 'Agotado' : 'Out of stock'}</>
+                            ) : isAtMax ? (
+                              <>{language === 'es' ? 'Límite alcanzado' : 'Limit reached'}</>
+                            ) : (
+                              <>
+                                <ShoppingCart className="size-4" />
+                                {t('shop.add_to_cart')}
+                              </>
+                            )}
+                          </Button>
                         </div>
 
-                        <Button
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleAddToCart(blend)
-                          }}
-                          disabled={justAdded || isSelectedOos}
-                          className={cn(
-                            "gap-1.5 transition-all",
-                            justAdded && "bg-green-600 hover:bg-green-600"
-                          )}
-                        >
-                          {justAdded ? (
-                            <>
-                              <Check className="size-4" />
-                              {t('shop.added')}
-                            </>
-                          ) : isSelectedOos ? (
-                            <>{language === 'es' ? 'Agotado' : 'Out of stock'}</>
-                          ) : (
-                            <>
-                              <ShoppingCart className="size-4" />
-                              {t('shop.add_to_cart')}
-                            </>
-                          )}
-                        </Button>
+                        {isAtMax && (
+                          <p className="text-xs text-muted-foreground text-right">
+                            {language === 'es'
+                              ? `Máximo ${maxBuyable} disponible${maxBuyable !== 1 ? 's' : ''}`
+                              : `Max ${maxBuyable} available`}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </CardContent>

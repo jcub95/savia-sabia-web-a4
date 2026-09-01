@@ -28,7 +28,17 @@ interface Order {
   ship_department: string | null
   ship_municipio: string | null
   ship_address_line: string | null
+  stock_deducted: boolean
+  stock_deducted_at: string | null
   order_items: OrderItem[]
+}
+
+interface DeficitItem {
+  sku: string
+  name: string
+  format: string
+  size: string
+  stock: number
 }
 
 interface Stats {
@@ -36,6 +46,8 @@ interface Stats {
   ordenesHoy: number
   ingresosMes: number
   sinStock: number
+  deficit: number
+  deficitItems: DeficitItem[]
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -132,7 +144,7 @@ function OrderRow({
   order: Order
   expanded: boolean
   onToggle: () => void
-  onStatusChange: (id: string, status: string, items: OrderItem[]) => void
+  onStatusChange: (id: string, status: string) => void
   statusChanging: boolean
 }) {
   const [copied, setCopied] = useState(false)
@@ -310,13 +322,29 @@ function OrderRow({
             </div>
           )}
 
+          {/* Inventory deducted indicator */}
+          {order.stock_deducted && order.stock_deducted_at && (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block size-1.5 rounded-full bg-[#5FAE55]" />
+              <span className="text-xs text-muted-foreground">
+                Inventario descontado ·{' '}
+                {new Date(order.stock_deducted_at).toLocaleDateString('es-GT', {
+                  day: '2-digit',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
+          )}
+
           {/* Status selector */}
           <div className="flex items-center gap-3 pt-1">
             <label className="text-xs text-muted-foreground shrink-0">Estado:</label>
             <select
               value={order.status}
               disabled={statusChanging}
-              onChange={e => onStatusChange(order.id, e.target.value, order.order_items)}
+              onChange={e => onStatusChange(order.id, e.target.value)}
               className="text-sm border border-border rounded-md px-2 py-1 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
             >
               {Object.entries(STATUS_LABELS).map(([val, label]) => (
@@ -344,6 +372,8 @@ export default function AdminOrdersPage() {
     ordenesHoy: 0,
     ingresosMes: 0,
     sinStock: 0,
+    deficit: 0,
+    deficitItems: [],
   })
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -355,7 +385,8 @@ export default function AdminOrdersPage() {
   const [fetchError, setFetchError] = useState<string | null>(null)
   const [changingId, setChangingId] = useState<string | null>(null)
   const [stockAlert, setStockAlert] = useState<{
-    items: OrderItem[]
+    type: 'deducted' | 'returned'
+    items: { sku: string; quantity: number }[]
     orderNumber: string
   } | null>(null)
 
@@ -408,7 +439,9 @@ export default function AdminOrdersPage() {
     setExpandedId(null)
   }
 
-  async function handleStatusChange(id: string, newStatus: string, items: OrderItem[]) {
+  async function handleStatusChange(id: string, newStatus: string) {
+    const order = orders.find(o => o.id === id)
+    const wasDeducted = order?.stock_deducted ?? false
     setChangingId(id)
     const res = await fetch(`/api/admin/orders/${id}`, {
       method: 'PATCH',
@@ -416,10 +449,21 @@ export default function AdminOrdersPage() {
       body: JSON.stringify({ status: newStatus }),
     })
     if (res.ok) {
-      const order = orders.find(o => o.id === id)
-      if (newStatus === 'pagado' && order) {
-        setStockAlert({ items, orderNumber: order.order_number })
+      const result = await res.json()
+      const isNowDeducted: boolean = result.stock_deducted ?? false
+      const affectedItems: { sku: string; quantity: number }[] = (result.order_items ?? [])
+        .filter((i: { products: { sku: string } | null }) => i.products)
+        .map((i: { products: { sku: string }; quantity: number }) => ({
+          sku: i.products!.sku,
+          quantity: i.quantity,
+        }))
+
+      if (!wasDeducted && isNowDeducted) {
+        setStockAlert({ type: 'deducted', items: affectedItems, orderNumber: result.order_number })
+      } else if (wasDeducted && !isNowDeducted) {
+        setStockAlert({ type: 'returned', items: affectedItems, orderNumber: result.order_number })
       }
+
       await Promise.all([fetchOrders(), fetchStats()])
     }
     setChangingId(null)
@@ -429,30 +473,60 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Stock reminder alert */}
+      {/* Deficit banner — permanent, non-closeable operational alert */}
+      {stats.deficit > 0 && (
+        <div className="border border-destructive/40 bg-destructive/10 rounded-lg px-4 py-3">
+          <p className="text-sm font-semibold text-destructive mb-1">
+            {stats.deficit} producto{stats.deficit > 1 ? 's' : ''} con stock negativo — hay que producir
+          </p>
+          <p className="text-xs text-destructive/80 mb-1">
+            {stats.deficitItems
+              .map(i => `${i.sku} (faltan ${Math.abs(i.stock)})`)
+              .join(' · ')}
+          </p>
+          <Link href="/admin/inventario" className="text-xs underline text-destructive/70 hover:text-destructive">
+            Ver inventario →
+          </Link>
+        </div>
+      )}
+
+      {/* Stock alert */}
       {stockAlert && (
-        <div className="border border-[#B07B2E]/30 bg-[#B07B2E]/10 rounded-lg px-4 py-3 flex items-start justify-between gap-4">
+        <div
+          className={`border rounded-lg px-4 py-3 flex items-start justify-between gap-4 ${
+            stockAlert.type === 'deducted'
+              ? 'border-[#5FAE55]/30 bg-[#5FAE55]/10'
+              : 'border-[#3B6FD4]/30 bg-[#3B6FD4]/10'
+          }`}
+        >
           <div>
-            <p className="text-sm font-medium text-[#B07B2E]">
-              Orden {stockAlert.orderNumber} marcada como Pagado
-            </p>
-            <p className="text-xs text-[#B07B2E]/80 mt-0.5">
-              Recuerda descontar el stock:{' '}
-              {stockAlert.items
-                .map(i => `${i.products?.sku ?? '—'} × ${i.quantity}`)
-                .join(', ')}
-            </p>
-            <Link
-              href="/admin/inventario"
-              className="text-xs underline text-[#B07B2E]/80 hover:text-[#B07B2E] mt-1 inline-block"
+            <p
+              className={`text-sm font-medium ${
+                stockAlert.type === 'deducted' ? 'text-[#3A7A35]' : 'text-[#2B52A0]'
+              }`}
             >
-              Ir a inventario →
-            </Link>
+              {stockAlert.type === 'deducted'
+                ? `Stock descontado automáticamente — orden ${stockAlert.orderNumber}`
+                : `Stock devuelto al inventario — orden ${stockAlert.orderNumber}`}
+            </p>
+            {stockAlert.items.length > 0 && (
+              <p
+                className={`text-xs mt-0.5 ${
+                  stockAlert.type === 'deducted' ? 'text-[#3A7A35]/80' : 'text-[#2B52A0]/80'
+                }`}
+              >
+                {stockAlert.items.map(i => `${i.sku} × ${i.quantity}`).join(', ')}
+              </p>
+            )}
           </div>
           <button
             type="button"
             onClick={() => setStockAlert(null)}
-            className="text-[#B07B2E]/60 hover:text-[#B07B2E] text-lg leading-none shrink-0"
+            className={`text-lg leading-none shrink-0 ${
+              stockAlert.type === 'deducted'
+                ? 'text-[#3A7A35]/50 hover:text-[#3A7A35]'
+                : 'text-[#2B52A0]/50 hover:text-[#2B52A0]'
+            }`}
           >
             ×
           </button>
@@ -460,11 +534,15 @@ export default function AdminOrdersPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <StatCard label="Pendientes" value={stats.pendientes} />
         <StatCard label="Órdenes hoy" value={stats.ordenesHoy} />
         <StatCard label="Ingresos del mes" value={stats.ingresosMes} isAmount />
         <StatCard label="SKUs agotados" value={stats.sinStock} />
+        <StatCard
+          label="Por producir"
+          value={stats.deficitItems.reduce((s, i) => s + Math.abs(i.stock), 0)}
+        />
       </div>
 
       {/* Filters */}
@@ -521,7 +599,7 @@ export default function AdminOrdersPage() {
               order={order}
               expanded={expandedId === order.id}
               onToggle={() => setExpandedId(prev => (prev === order.id ? null : order.id))}
-              onStatusChange={handleStatusChange}
+              onStatusChange={(id, status) => handleStatusChange(id, status)}
               statusChanging={changingId === order.id}
             />
           ))}

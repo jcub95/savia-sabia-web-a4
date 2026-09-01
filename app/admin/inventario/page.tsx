@@ -30,6 +30,13 @@ function getBlendGroup(sku: string): string {
   return SKU_PREFIX_LABEL[prefix] ?? prefix
 }
 
+function stockPriority(stock: number): number {
+  if (stock < 0) return 0
+  if (stock === 0) return 1
+  if (stock <= 2) return 2
+  return 3
+}
+
 function groupProducts(products: Product[]): Array<{ blend: string; items: Product[] }> {
   const map = new Map<string, Product[]>()
   const order = Object.values(SKU_PREFIX_LABEL)
@@ -42,7 +49,10 @@ function groupProducts(products: Product[]): Array<{ blend: string; items: Produ
 
   return order
     .filter(b => map.has(b))
-    .map(blend => ({ blend, items: map.get(blend)! }))
+    .map(blend => ({
+      blend,
+      items: [...map.get(blend)!].sort((a, b) => stockPriority(a.stock) - stockPriority(b.stock)),
+    }))
 }
 
 function formatLabel(p: Product): string {
@@ -96,7 +106,7 @@ function StockRow({
             value={draft}
             onChange={e => {
               const val = parseInt(e.target.value, 10)
-              if (!isNaN(val) && val >= 0) onChange(product.sku, val)
+              if (!isNaN(val)) onChange(product.sku, val)
             }}
             className={`w-14 text-center text-sm border rounded-md px-1 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
               isOut
@@ -191,6 +201,14 @@ export default function AdminInventarioPage() {
 
   return (
     <div className="space-y-5">
+      {/* Context note */}
+      <div className="border border-border rounded-lg px-4 py-3 bg-secondary/30">
+        <p className="text-sm text-muted-foreground">
+          El stock se descuenta automáticamente al confirmar pagos. Edita aquí únicamente
+          para registrar producción nueva o corregir un conteo.
+        </p>
+      </div>
+
       {/* Sticky save bar */}
       <div className="sticky top-16 z-10 -mx-4 px-4 py-3 bg-background/95 backdrop-blur border-b border-border flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">
@@ -253,8 +271,19 @@ export default function AdminInventarioPage() {
                     </tr>
                   </thead>
                   <tbody className="px-4">
-                    {items.map(p => (
-                      <tr key={p.sku} className="border-b border-border/50 last:border-0">
+                    {items.map(p => {
+                      const draftVal = drafts[p.sku] ?? p.stock
+                      const isNegative = draftVal < 0
+                      const isZero = draftVal === 0
+                      const isLow = draftVal > 0 && draftVal <= 2
+
+                      return (
+                      <tr
+                        key={p.sku}
+                        className={`border-b border-border/50 last:border-0 ${
+                          isNegative ? 'bg-destructive/8' : isZero ? 'bg-[#B07B2E]/5' : ''
+                        }`}
+                      >
                         <td className="py-2.5 px-4 pr-3">
                           <p className="text-sm text-foreground">{formatLabel(p)}</p>
                           <p className="text-xs text-muted-foreground font-mono">{p.sku}</p>
@@ -267,25 +296,25 @@ export default function AdminInventarioPage() {
                             <button
                               type="button"
                               aria-label="Restar uno"
-                              disabled={(drafts[p.sku] ?? p.stock) <= 0}
                               onClick={() =>
-                                handleChange(p.sku, Math.max(0, (drafts[p.sku] ?? p.stock) - 1))
+                                handleChange(p.sku, (drafts[p.sku] ?? p.stock) - 1)
                               }
-                              className="min-h-[44px] min-w-[44px] flex items-center justify-center border border-border rounded-md text-sm text-foreground hover:bg-secondary disabled:opacity-30 transition-colors"
+                              className="min-h-[44px] min-w-[44px] flex items-center justify-center border border-border rounded-md text-sm text-foreground hover:bg-secondary transition-colors"
                             >
                               −
                             </button>
 
                             <input
                               type="number"
-                              min={0}
                               value={drafts[p.sku] ?? p.stock}
                               onChange={e => {
                                 const val = parseInt(e.target.value, 10)
-                                if (!isNaN(val) && val >= 0) handleChange(p.sku, val)
+                                if (!isNaN(val)) handleChange(p.sku, val)
                               }}
                               className={`w-14 text-center text-sm border rounded-md px-1 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-                                (drafts[p.sku] ?? p.stock) === 0
+                                (drafts[p.sku] ?? p.stock) < 0
+                                  ? 'border-destructive text-destructive font-bold'
+                                  : (drafts[p.sku] ?? p.stock) === 0
                                   ? 'border-destructive text-destructive'
                                   : (drafts[p.sku] ?? p.stock) <= 2
                                   ? 'border-[#B07B2E] text-[#B07B2E]'
@@ -302,15 +331,35 @@ export default function AdminInventarioPage() {
                               +
                             </button>
 
-                            {drafts[p.sku] !== p.stock && (
+                            {draftVal < 0 && (
+                              <span className="text-xs text-destructive font-medium ml-1">
+                                Descuadre
+                              </span>
+                            )}
+
+                            {drafts[p.sku] !== p.stock && draftVal >= 0 && (
                               <span className="text-xs text-muted-foreground ml-1">
                                 era {p.stock}
                               </span>
                             )}
                           </div>
+
+                          {/* Stock state label */}
+                          {isNegative && (
+                            <p className="text-xs text-destructive font-medium mt-1">
+                              Faltan {Math.abs(draftVal)} unidades
+                            </p>
+                          )}
+                          {isZero && (
+                            <p className="text-xs text-[#B07B2E] font-medium mt-1">Agotado</p>
+                          )}
+                          {isLow && (
+                            <p className="text-xs text-[#B07B2E]/70 mt-1">Bajo</p>
+                          )}
                         </td>
                       </tr>
-                    ))}
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>

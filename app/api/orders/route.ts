@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { validateCheckout } from '@/lib/validation'
-import { calcTotals } from '@/lib/checkout-config'
+import { calcTotals, OVERSELL_BUFFER } from '@/lib/checkout-config'
 import { sendOrderEmails } from '@/lib/email/send-order-email'
 import type { CheckoutFormData } from '@/lib/checkout-config'
 
@@ -67,6 +67,8 @@ export async function POST(req: NextRequest) {
 
   const productMap = new Map(products.map(p => [p.sku, p]))
 
+  const oversoldLines: string[] = []
+
   for (const item of items) {
     const product = productMap.get(item.sku)
     if (!product || product.is_active === false) {
@@ -75,13 +77,27 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-    if (item.quantity > (product.stock ?? 0)) {
+    const stock = product.stock ?? 0
+    if (stock <= 0) {
       return NextResponse.json(
         { error: 'out_of_stock', productName: item.name_es },
         { status: 409 }
       )
     }
+    if (item.quantity > stock + OVERSELL_BUFFER) {
+      return NextResponse.json(
+        { error: 'out_of_stock', productName: item.name_es, maxAvailable: stock + OVERSELL_BUFFER },
+        { status: 409 }
+      )
+    }
+    if (item.quantity > stock) {
+      oversoldLines.push(`${item.sku} ×${item.quantity} (stock ${stock})`)
+    }
   }
+
+  const oversoldMarker = oversoldLines.length > 0
+    ? `[SOBRE PEDIDO: ${oversoldLines.join(', ')}] `
+    : ''
 
   // 3. Calculate totals from DB prices
   let subtotalQ = 0
@@ -146,7 +162,7 @@ export async function POST(req: NextRequest) {
       payment_method: form.paymentMethod,
       shipping_q: totals.shippingQ,
       total_q: totals.totalQ,
-      notes: form.notes?.trim() || null,
+      notes: (oversoldMarker + (form.notes?.trim() ?? '')).trim() || null,
       status: 'pendiente',
       // Snapshot — frozen at order time, never synced with customers/addresses
       contact_name: form.name.trim(),

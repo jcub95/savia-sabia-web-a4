@@ -19,11 +19,13 @@ export async function GET() {
     { count: ordenesHoy },
     { data: ordenesMes },
     { count: sinStock },
+    { data: deficitProducts },
   ] = await Promise.all([
     admin.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'pendiente'),
     admin.from('orders').select('*', { count: 'exact', head: true }).gte('created_at', startOfDay),
     admin.from('orders').select('total_q').neq('status', 'cancelado').gte('created_at', startOfMonth),
     admin.from('products').select('*', { count: 'exact', head: true }).eq('stock', 0),
+    admin.from('products').select('sku, name, format, size, stock').lt('stock', 0),
   ])
 
   const ingresosMes = (ordenesMes ?? []).reduce(
@@ -31,10 +33,14 @@ export async function GET() {
     0
   )
 
+  const deficitItems = deficitProducts ?? []
+
   return NextResponse.json({
     pendientes: pendientes ?? 0,
     ordenesHoy: ordenesHoy ?? 0,
     ingresosMes,
     sinStock: sinStock ?? 0,
+    deficit: deficitItems.length,
+    deficitItems,
   })
 }

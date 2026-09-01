@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
        shipping_q, total_q, notes,
        contact_name, contact_phone, contact_email,
        ship_department, ship_municipio, ship_address_line,
+       stock_deducted, stock_deducted_at,
        order_items (
          id, quantity, unit_price_q,
          products ( sku, name, format, size )

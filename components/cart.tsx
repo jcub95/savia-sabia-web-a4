@@ -10,6 +10,10 @@ import { cn } from '@/lib/utils'
 import { herbs } from '@/lib/herbs-data'
 import { useCart, formatPrice } from '@/lib/cart-context'
 import { useLanguage } from '@/lib/language-context'
+import { useStock } from '@/lib/stock-context'
+import { maxPurchasable, isOversold } from '@/lib/checkout-config'
+import type { BlendId } from '@/lib/herbs-data'
+import type { ProductSize } from '@/lib/cart-context'
 import { CheckoutDialog } from './checkout-dialog'
 
 interface CartProps {
@@ -21,6 +25,7 @@ interface CartProps {
 export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
   const { items, removeFromCart, updateQuantity, getTotalPrice } = useCart()
   const { t, language } = useLanguage()
+  const { getStock } = useStock()
   const [checkoutOpen, setCheckoutOpen] = useState(false)
 
   const getHerbById = (id: string) => herbs.find(h => h.id === id)
@@ -160,7 +165,7 @@ export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
                             {item.blend.herbs.slice(0, 3).map((herbId) => {
                               const herb = getHerbById(herbId)
                               return herb ? (
-                                <span 
+                                <span
                                   key={herbId}
                                   className="text-xs text-muted-foreground"
                                 >
@@ -177,8 +182,19 @@ export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
                           <span className="text-sm font-medium text-foreground">
                             {formatPrice(item.variant.price)}
                           </span>
+                          {/* Oversold notice */}
+                          {isOversold(
+                            getStock(item.blend.id as BlendId, item.variant.size as ProductSize),
+                            item.quantity
+                          ) && (
+                            <p className="text-xs text-muted-foreground mt-1.5">
+                              {language === 'es'
+                                ? 'Sobre pedido — suma 1 a 2 días hábiles.'
+                                : 'Made to order — adds 1 to 2 business days.'}
+                            </p>
+                          )}
                         </div>
-                        
+
                         {/* Quantity Controls */}
                         <div className="flex flex-col items-end gap-2">
                           <Button
@@ -189,7 +205,7 @@ export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
                           >
                             <Trash2 className="size-4" />
                           </Button>
-                          
+
                           <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
                             <Button
                               variant="ghost"
@@ -205,13 +221,16 @@ export function Cart({ onBack, onContinueShopping, onGoHome }: CartProps) {
                             <Button
                               variant="ghost"
                               size="sm"
+                              disabled={item.quantity >= maxPurchasable(
+                                getStock(item.blend.id as BlendId, item.variant.size as ProductSize)
+                              )}
                               onClick={() => updateQuantity(item.blend.id, item.variant.size, item.quantity + 1)}
                               className="size-7 p-0"
                             >
                               <Plus className="size-3" />
                             </Button>
                           </div>
-                          
+
                           <span className="text-sm font-semibold text-foreground">
                             {formatPrice(item.variant.price * item.quantity)}
                           </span>

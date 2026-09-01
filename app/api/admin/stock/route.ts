@@ -45,9 +45,9 @@ export async function PATCH(req: NextRequest) {
     if (!u.sku || typeof u.sku !== 'string') {
       return NextResponse.json({ error: `SKU inválido: ${u.sku}` }, { status: 400 })
     }
-    if (typeof u.stock !== 'number' || !Number.isInteger(u.stock) || u.stock < 0) {
+    if (typeof u.stock !== 'number' || !Number.isInteger(u.stock)) {
       return NextResponse.json(
-        { error: `Stock inválido para ${u.sku}: debe ser entero no negativo` },
+        { error: `Stock inválido para ${u.sku}: debe ser un entero` },
         { status: 400 }
       )
     }

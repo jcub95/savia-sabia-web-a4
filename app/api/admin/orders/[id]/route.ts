@@ -46,7 +46,13 @@ export async function PATCH(
     .from('orders')
     .update({ status: status as OrderStatus, updated_at: new Date().toISOString() })
     .eq('id', id)
-    .select('id, order_number, status')
+    .select(`
+      id, order_number, status, stock_deducted, stock_deducted_at,
+      order_items (
+        id, quantity, unit_price_q,
+        products ( sku, name )
+      )
+    `)
     .single()
 
   if (error) {

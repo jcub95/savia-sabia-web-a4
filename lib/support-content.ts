@@ -408,6 +408,16 @@ export const faqCategories: FaqCategory[] = [
           es: 'Sí. Escríbenos a savia.sabia.herbs@gmail.com con el asunto "Mayoreo".',
         },
       },
+      {
+        q: {
+          es: '¿Qué pasa si pido más de lo que hay disponible?',
+          en: 'What if I order more than what\'s available?',
+        },
+        a: {
+          es: 'Producimos a mano y en lotes pequeños. Si pides un poco más de lo que tenemos empacado en ese momento, aceptamos el pedido y lo preparamos: suma uno o dos días hábiles a la entrega. Si la cantidad supera lo que podemos preparar rápido, el producto aparece como agotado y no te dejamos ordenarlo.',
+          en: 'We produce by hand in small batches. If you order slightly more than what we have packed at that moment, we\'ll accept the order and prepare it — this adds one or two business days to delivery. If the quantity exceeds what we can prepare quickly, the product shows as sold out and can\'t be ordered.',
+        },
+      },
     ],
   },
 ]

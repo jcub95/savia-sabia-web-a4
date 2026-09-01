@@ -151,3 +151,165 @@ La lógica del quiz debe corresponder a la matriz documentada en
 | Mezcla suelta | 2 oz | Q120 |
 | Cigarrillos listos | Pack 12 u | Q30 |
 | Cigarrillos listos | Pack 24 u | Q50 |
+
+
+## Checkout y órdenes (agosto 2026)
+
+### Flujo completo
+Cliente arma carrito → modal de checkout en dos pasos → `POST /api/orders` →
+se guarda en Supabase → se abre WhatsApp con el pedido redactado →
+correo de confirmación (si Resend está configurado).
+
+El número de orden lo genera Postgres con la secuencia `order_number_seq`
+en formato `SS-0001`. Nunca se reinicia una vez que hay órdenes reales.
+
+### Entrega y pago son campos independientes
+- `delivery_type`: `envio` | `recogida`
+- `payment_method`: `transferencia` | `contra_entrega`
+
+Contra entrega está disponible en todo el país, **sin recargo**.
+Envío Q40 por Cargo Expreso, gratis desde Q200 de subtotal.
+Recogida en San Lucas Sacatepéquez, Q0.
+
+### Columnas de instantánea en `orders`
+`contact_name`, `contact_phone`, `contact_email`, `ship_department`,
+`ship_municipio`, `ship_address_line`.
+
+Son un **registro histórico del momento de la orden**. No se sincronizan con
+`customers` ni `addresses`. Si el cliente cambia de teléfono, la orden conserva
+el número al que realmente se despachó. Es el mismo criterio por el que
+`order_items.unit_price_q` guarda el precio de compra en vez de leerlo de
+`products`.
+
+Para mostrar una orden, usar SIEMPRE estos campos, no los de `customers`.
+
+### Los campos `ship_*` son NULL en órdenes de recogida
+No es un error, es intencional.
+
+---
+
+## Stock
+
+### Descuento automático (trigger)
+El trigger `orders_sync_stock` en la tabla `orders`:
+
+- **Descuenta** al entrar a `pagado`, `preparacion`, `enviado` o `entregado`
+- **Devuelve** al volver a `pendiente` o pasar a `cancelado`
+- Es **idempotente**: la bandera `stock_deducted` evita descuentos dobles
+
+Vive en la base de datos, no en el API route, para que funcione también cuando
+se cambia un estado directamente desde Supabase.
+
+**Nunca escribir `stock_deducted` ni `stock_deducted_at` desde la aplicación.**
+
+### Stock negativo permitido
+Se permite a propósito. Bloquear la confirmación de un pago por un descuadre de
+inventario causa más daño operativo que el número negativo. El panel lo muestra
+en rojo como "Descuadre" para corregirlo manualmente.
+
+### Edición manual = último recurso
+`/admin/inventario` sirve para registrar producción nueva o corregir conteos
+físicos. No para el flujo normal de ventas.
+
+---
+
+## Panel de administración `/admin`
+
+Autenticación con Supabase Auth (correo + contraseña). Signup público
+**desactivado** — los usuarios se crean desde Authentication → Users.
+No hay pantalla de registro ni de recuperación por diseño.
+
+Toda lectura administrativa pasa por API routes del servidor con
+`SUPABASE_SERVICE_ROLE_KEY`. Cada handler bajo `/api/admin/` verifica la sesión
+por su cuenta: el proxy no es la única capa de defensa.
+
+Solo español. Sin bilingüe.
+
+---
+
+## Seguridad
+
+RLS activo en las cinco tablas. Única política: lectura pública de `products`
+donde `is_active = true`. Las demás tablas no tienen políticas, así que la
+anon key no puede leerlas ni escribirlas.
+
+`SUPABASE_SERVICE_ROLE_KEY` solo puede aparecer en `app/api/` y en
+`lib/supabase/admin.ts`. **Nunca** en un componente de cliente ni con prefijo
+`NEXT_PUBLIC_`.
+
+---
+
+## Trampas conocidas (aprendidas a la mala)
+
+### Next.js 16: `proxy.ts`, no `middleware.ts`
+`middleware.ts` está deprecado. El archivo se llama `proxy.ts`, la función
+exportada se llama `proxy`, y **debe estar en la raíz del proyecto**, al mismo
+nivel que `package.json`. Si está en otra carpeta, no se ejecuta y falla en
+silencio.
+
+El matcher `['/admin/:path*']` NO captura `/admin` exacto. Usar
+`['/admin', '/admin/:path*']`.
+
+### `order_items` no tiene columna `sku`
+Sus columnas son: `id`, `order_id`, `product_id`, `quantity`, `unit_price_q`,
+`subtotal_q`. Para obtener el SKU hay que hacer JOIN a `products` por
+`product_id`.
+
+Este error causó que las órdenes se guardaran **sin líneas de producto** durante
+días, sin ningún mensaje de error visible.
+
+### `subtotal_q` es GENERATED ALWAYS
+Postgres rechaza cualquier intento de escribirla. Nunca incluirla en un INSERT.
+
+### `lib/database.types.ts` es generado, nunca se edita a mano
+Regenerar con `pnpm types` cada vez que cambie el esquema. Editarlo manualmente
+crea tipos que no corresponden a la realidad y desactiva la única protección
+que tenemos contra errores de nombre de columna.
+
+### Siempre capturar el `error` de Supabase
+```ts
+const { data, error } = await supabase.from('x').insert(y)
+if (error) { console.error('contexto:', error); /* manejar */ }
+```
+Ignorar el `error` produce fallos silenciosos que devuelven 200 mientras nada
+se guardó. Fue la causa raíz del bug de `order_items`.
+
+### `git push` con archivos staged pero sin commitear no falla ni avisa
+Después de cada commit: `git log --oneline -1`. Si el mensaje no aparece ahí,
+el commit no existe. Usar `git add -A`, nunca `git add .`.
+
+### Usar pnpm, nunca npm
+Instalar con npm desincroniza `pnpm-lock.yaml` y rompe el build de Vercel con
+`ERR_PNPM_OUTDATED_LOCKFILE`.
+
+### Correr `pnpm build` antes de commitear
+Captura errores de producción que `pnpm dev` no muestra.
+
+### Caché de `.next` tras cambios estructurales
+Si aparecen errores sobre módulos inexistentes:
+`Remove-Item -Recurse -Force .next` y reiniciar.
+
+---
+
+## Comandos de referencia
+
+```powershell
+pnpm dev            # servidor local
+pnpm build          # verificar antes de commitear
+pnpm types          # regenerar tipos de Supabase
+```
+
+Guardadas en el SQL Editor de Supabase: `Sumar producción`, `Conteo físico`,
+`Bajo stock`.
+
+---
+
+## Pendientes
+
+- [ ] Dominio propio (`saviasabia.com`) → desbloquea Resend
+- [ ] Sentry antes de mandar tráfico real
+- [ ] Sesión de fotografía (guía PDF entregada)
+- [ ] Migrar `?view=` a rutas reales de Next.js
+- [ ] PostHog (mes 2)
+- [ ] Verificar especie real de Gordolobo, Menta y Pasiflora con proveedor
+- [ ] Formalización SAT → Recurrente para pagos en línea

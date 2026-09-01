@@ -40,6 +40,16 @@ export function calcTotals(subtotalQ: number, deliveryType: 'envio' | 'recogida'
   return { subtotalQ, shippingQ, totalQ: subtotalQ + shippingQ }
 }
 
+export const OVERSELL_BUFFER = 2
+
+export function maxPurchasable(stock: number): number {
+  return stock <= 0 ? 0 : stock + OVERSELL_BUFFER
+}
+
+export function isOversold(stock: number, qty: number): boolean {
+  return qty > stock
+}
+
 export interface WhatsAppDisplayItem {
   name: string
   variantLabel: string
