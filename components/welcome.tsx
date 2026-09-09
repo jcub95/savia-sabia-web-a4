@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/lib/language-context'
 import { blends } from '@/lib/herbs-data'
 import { cn } from '@/lib/utils'
+import { BlendSpectrum } from '@/components/blend-spectrum'
 
 interface WelcomeProps {
   onStartSurvey: () => void
@@ -232,6 +233,11 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════
+          ESPECTRO DE MEZCLAS
+      ═══════════════════════════════════════ */}
+      <BlendSpectrum onShopBlends={onShopBlends} />
 
       {/* ═══════════════════════════════════════
           HECHO A MANO
