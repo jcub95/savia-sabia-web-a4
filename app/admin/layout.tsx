@@ -49,6 +49,12 @@ export default async function AdminLayout({
               Órdenes
             </Link>
             <Link
+              href="/admin/produccion"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Producción
+            </Link>
+            <Link
               href="/admin/inventario"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

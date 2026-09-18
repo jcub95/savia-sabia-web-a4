@@ -3,33 +3,35 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET() {
-  // Auth check
   const serverClient = await createServerSupabaseClient()
   const { data: { user } } = await serverClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const admin = createAdminClient()
 
+  // Lo más escaso primero.
   const { data, error } = await admin
-    .from('products')
-    .select('sku, name, format, size, stock, price_q, is_active, blend_id, oz_per_unit')
-    .order('sku')
+    .from('herb_inventory')
+    .select('id, name_es, grams, updated_at')
+    .order('grams', { ascending: true })
 
   if (error) {
-    console.error('Stock fetch error:', error)
+    console.error('Herb inventory fetch error:', {
+      code: error.code, message: error.message, details: error.details, hint: error.hint,
+    })
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ products: data })
+  return NextResponse.json({ herbs: data ?? [] })
 }
 
+// Edición libre del Nivel 1: no pasa por ninguna función de producción.
 export async function PATCH(req: NextRequest) {
-  // Auth check
   const serverClient = await createServerSupabaseClient()
   const { data: { user } } = await serverClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  let updates: Array<{ sku: string; stock: number }>
+  let updates: Array<{ id: string; grams: number }>
   try {
     updates = await req.json()
   } catch {
@@ -40,14 +42,13 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Se requiere un array de actualizaciones' }, { status: 400 })
   }
 
-  // Validate each entry
   for (const u of updates) {
-    if (!u.sku || typeof u.sku !== 'string') {
-      return NextResponse.json({ error: `SKU inválido: ${u.sku}` }, { status: 400 })
+    if (!u.id || typeof u.id !== 'string') {
+      return NextResponse.json({ error: `Hierba inválida: ${u.id}` }, { status: 400 })
     }
-    if (typeof u.stock !== 'number' || !Number.isInteger(u.stock)) {
+    if (typeof u.grams !== 'number' || !Number.isFinite(u.grams) || u.grams < 0) {
       return NextResponse.json(
-        { error: `Stock inválido para ${u.sku}: debe ser un entero` },
+        { error: `Gramos inválidos para ${u.id}: debe ser un número no negativo` },
         { status: 400 }
       )
     }
@@ -55,22 +56,21 @@ export async function PATCH(req: NextRequest) {
 
   const admin = createAdminClient()
 
-  // Update each SKU individually (Supabase doesn't support bulk upsert with different values per row easily)
   const results = await Promise.all(
-    updates.map(({ sku, stock }) =>
+    updates.map(({ id, grams }) =>
       admin
-        .from('products')
-        .update({ stock })
-        .eq('sku', sku)
-        .select('sku, stock')
+        .from('herb_inventory')
+        .update({ grams, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select('id, grams')
         .single()
     )
   )
 
-  const errors = results.filter(r => r.error)
-  if (errors.length > 0) {
-    console.error('Stock update errors:', errors.map(r => r.error))
-    return NextResponse.json({ error: 'Error actualizando algunos SKUs' }, { status: 500 })
+  const failed = results.filter(r => r.error)
+  if (failed.length > 0) {
+    console.error('Herb update errors:', failed.map(r => r.error))
+    return NextResponse.json({ error: 'Error actualizando algunas hierbas' }, { status: 500 })
   }
 
   return NextResponse.json({ updated: results.map(r => r.data) })

@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/language-context'
 import { herbs, type BlendId, type LocalizedString } from '@/lib/herbs-data'
+import { BLEND_PALETTE } from '@/lib/blend-colors'
 import { cn } from '@/lib/utils'
 
 interface BlendSpectrumProps {
@@ -18,12 +19,6 @@ interface SpectrumBlend {
   id: BlendId
   /** Nombre de mezcla: nunca se traduce. */
   name: string
-  /** Color puro de marca. Solo para rellenos sólidos, nunca texto sobre crema. */
-  hex: string
-  /** Tono oscuro: texto sobre fondo claro. */
-  ink: string
-  /** Tono claro: texto sobre el verde oscuro del tema nocturno. */
-  inkDark: string
   family: Family
   slogan: LocalizedString
   herbIds: string[]
@@ -38,9 +33,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'enfoque',
     name: 'Enfoque',
-    hex: '#3B6FD4',
-    ink: '#2A4FA0',
-    inkDark: '#9DB8F0',
     family: 'mente',
     slogan: { es: 'Concentración Natural', en: 'Natural Focus' },
     herbIds: ['rosemary', 'damiana', 'mullein', 'mint'],
@@ -64,9 +56,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'claridad-pulmonar',
     name: 'Claridad Pulmonar',
-    hex: '#3BAEC6',
-    ink: '#23808F',
-    inkDark: '#8AD6E6',
     family: 'respiracion',
     slogan: { es: 'Purificación Intensiva', en: 'Deep Purification' },
     herbIds: ['mullein', 'eucalyptus', 'thyme', 'sage', 'mint'],
@@ -90,9 +79,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'proteccion',
     name: 'Protección',
-    hex: '#5FAE55',
-    ink: '#3E7A38',
-    inkDark: '#A5D89E',
     family: 'respiracion',
     slogan: { es: 'Defensa Respiratoria', en: 'Respiratory Defense' },
     herbIds: ['mullein', 'sage', 'rosemary', 'jasmine', 'eucalyptus'],
@@ -116,9 +102,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'nutre-el-alma',
     name: 'Nutre el Alma',
-    hex: '#DE7E38',
-    ink: '#A85417',
-    inkDark: '#F0B382',
     family: 'mente',
     slogan: { es: 'Elevación Emocional', en: 'Emotional Lift' },
     herbIds: ['damiana', 'calendula', 'roses', 'lavender', 'passionflower'],
@@ -142,9 +125,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'suavidad',
     name: 'Suavidad',
-    hex: '#D87FA4',
-    ink: '#A34A6E',
-    inkDark: '#EFB2C9',
     family: 'mente',
     slogan: { es: 'Calma Diaria', en: 'Daily Calm' },
     herbIds: ['pericorn', 'lemon-balm', 'chamomile', 'mint'],
@@ -168,9 +148,6 @@ const spectrum: SpectrumBlend[] = [
   {
     id: 'sueno-profundo',
     name: 'Sueño Profundo',
-    hex: '#9E7FCB',
-    ink: '#6E4F9E',
-    inkDark: '#C9B2E8',
     family: 'mente',
     slogan: { es: 'Apaga la Mente', en: 'Quiet the Mind' },
     herbIds: ['pericorn', 'passionflower', 'lemon-balm', 'lavender'],
@@ -355,7 +332,7 @@ export function BlendSpectrum({ onShopBlends }: BlendSpectrumProps) {
                   onClick={() => select(i)}
                   animate={{ height: isActive ? '100%' : '58%' }}
                   transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-                  style={{ backgroundColor: blend.hex }}
+                  style={{ backgroundColor: BLEND_PALETTE[blend.id].hex }}
                   className={cn(
                     'flex-1 rounded-md cursor-pointer transition-opacity',
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
@@ -375,8 +352,8 @@ export function BlendSpectrum({ onShopBlends }: BlendSpectrumProps) {
                 key={blend.id}
                 style={
                   {
-                    '--ink': blend.ink,
-                    '--ink-dk': blend.inkDark,
+                    '--ink': BLEND_PALETTE[blend.id].ink,
+                    '--ink-dk': BLEND_PALETTE[blend.id].inkDark,
                   } as React.CSSProperties
                 }
                 className={cn(
@@ -411,9 +388,9 @@ export function BlendSpectrum({ onShopBlends }: BlendSpectrumProps) {
               transition={{ duration: 0.22 }}
               style={
                 {
-                  '--ink': active.ink,
-                  '--ink-dk': active.inkDark,
-                  borderLeftColor: active.hex,
+                  '--ink': BLEND_PALETTE[active.id].ink,
+                  '--ink-dk': BLEND_PALETTE[active.id].inkDark,
+                  borderLeftColor: BLEND_PALETTE[active.id].hex,
                 } as React.CSSProperties
               }
               className="bg-card border border-border border-l-4 rounded-xl p-6 md:p-8"
@@ -446,8 +423,8 @@ export function BlendSpectrum({ onShopBlends }: BlendSpectrumProps) {
                 key={blend.id}
                 style={
                   {
-                    '--ink': blend.ink,
-                    '--ink-dk': blend.inkDark,
+                    '--ink': BLEND_PALETTE[blend.id].ink,
+                    '--ink-dk': BLEND_PALETTE[blend.id].inkDark,
                   } as React.CSSProperties
                 }
                 className="bg-card border border-border rounded-xl overflow-hidden"
@@ -461,7 +438,7 @@ export function BlendSpectrum({ onShopBlends }: BlendSpectrumProps) {
                 >
                   <span
                     className="size-3 rounded-full shrink-0"
-                    style={{ backgroundColor: blend.hex }}
+                    style={{ backgroundColor: BLEND_PALETTE[blend.id].hex }}
                   />
                   <span className="flex-1 min-w-0">
                     <span className="block font-serif font-semibold text-[var(--ink)] dark:text-[var(--ink-dk)]">

@@ -58,6 +58,60 @@ export type Database = {
           },
         ]
       }
+      blend_bulk: {
+        Row: {
+          id: string
+          name_es: string
+          ounces: number
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          name_es: string
+          ounces?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name_es?: string
+          ounces?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      blend_recipes: {
+        Row: {
+          blend_id: string
+          grams_per_oz: number
+          herb_id: string
+        }
+        Insert: {
+          blend_id: string
+          grams_per_oz: number
+          herb_id: string
+        }
+        Update: {
+          blend_id?: string
+          grams_per_oz?: number
+          herb_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blend_recipes_blend_id_fkey"
+            columns: ["blend_id"]
+            isOneToOne: false
+            referencedRelation: "blend_bulk"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blend_recipes_herb_id_fkey"
+            columns: ["herb_id"]
+            isOneToOne: false
+            referencedRelation: "herb_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           created_at: string | null
@@ -82,6 +136,27 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+        }
+        Relationships: []
+      }
+      herb_inventory: {
+        Row: {
+          grams: number
+          id: string
+          name_es: string
+          updated_at: string
+        }
+        Insert: {
+          grams?: number
+          id: string
+          name_es: string
+          updated_at?: string
+        }
+        Update: {
+          grams?: number
+          id?: string
+          name_es?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -244,48 +319,125 @@ export type Database = {
           },
         ]
       }
+      production_log: {
+        Row: {
+          action: string
+          blend_id: string | null
+          created_at: string
+          detail: Json | null
+          id: number
+          sku: string | null
+        }
+        Insert: {
+          action: string
+          blend_id?: string | null
+          created_at?: string
+          detail?: Json | null
+          id?: number
+          sku?: string | null
+        }
+        Update: {
+          action?: string
+          blend_id?: string | null
+          created_at?: string
+          detail?: Json | null
+          id?: number
+          sku?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
+          blend_id: string | null
           created_at: string | null
           format: string
           id: string
           is_active: boolean
           name: string
+          oz_per_unit: number | null
           price_q: number
           size: string
           sku: string
           stock: number
         }
         Insert: {
+          blend_id?: string | null
           created_at?: string | null
           format: string
           id?: string
           is_active?: boolean
           name: string
+          oz_per_unit?: number | null
           price_q: number
           size: string
           sku: string
           stock?: number
         }
         Update: {
+          blend_id?: string | null
           created_at?: string | null
           format?: string
           id?: string
           is_active?: boolean
           name?: string
+          oz_per_unit?: number | null
           price_q?: number
           size?: string
           sku?: string
           stock?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_blend_id_fkey"
+            columns: ["blend_id"]
+            isOneToOne: false
+            referencedRelation: "blend_bulk"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
-      [_ in never]: never
+      stock_alerts: {
+        Row: {
+          format: string | null
+          name: string | null
+          nivel: string | null
+          size: string | null
+          sku: string | null
+          stock: number | null
+          unidades_por_producir: number | null
+        }
+        Insert: {
+          format?: string | null
+          name?: string | null
+          nivel?: never
+          size?: string | null
+          sku?: string | null
+          stock?: number | null
+          unidades_por_producir?: never
+        }
+        Update: {
+          format?: string | null
+          name?: string | null
+          nivel?: never
+          size?: string | null
+          sku?: string | null
+          stock?: number | null
+          unidades_por_producir?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      empacar_producto: {
+        Args: { p_sku: string; p_unidades: number }
+        Returns: Json
+      }
+      preparar_mezcla: {
+        Args: { p_blend: string; p_oz: number }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
@@ -304,12 +456,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -333,11 +485,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -358,11 +510,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -383,11 +535,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -400,11 +552,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
