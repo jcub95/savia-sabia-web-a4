@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/site-config'
 import { NosotrosContent } from '@/components/pages/nosotros-content'
 
-export const metadata: Metadata = {
-  title: 'Nosotros | Savia Sabia',
+export const metadata: Metadata = pageMetadata({
+  title: 'Nosotros',
   description:
-    'Conoce a Juan Carlos y Álvaro, el equipo detrás de Savia Sabia, y los valores que guían cada mezcla herbal.',
-}
+    'Dos personas, una obsesión con las plantas. Hierbas de origen local y orgánico, papeles sin blanquear y todo el proceso hecho a mano.',
+  path: '/nosotros',
+})
 
 export default function NosotrosPage() {
   return <NosotrosContent />
