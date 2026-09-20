@@ -1,2 +1,6 @@
 allowBuilds:
+  # Su postinstall resuelve el binario de sentry-cli, necesario para subir
+  # source maps durante el build. Sin esto pnpm install sale con
+  # ERR_PNPM_IGNORED_BUILDS y nunca se llega a correr next build.
+  '@sentry/cli': true
   sharp: true
