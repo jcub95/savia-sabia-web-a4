@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Leaf, ChevronRight, ChevronDown, Sparkles, Heart, Wind, Sun, RotateCcw, BookOpen, Package, ShoppingCart, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,45 @@ interface ResultsProps {
   onViewHerbarium: () => void
   onShopBlends: () => void
   onGoHome: () => void
+}
+
+/**
+ * Ilustración por perfil. Los archivos traen espacios y acentos en el nombre,
+ * así que la ruta se codifica una sola vez aquí en vez de escribir %20 a mano.
+ * Dimensiones reales de los cuatro PNG: 1264x848.
+ */
+const PROFILE_ILLUSTRATIONS: Record<
+  SmokerProfileType,
+  { file: string; alt: { en: string; es: string } }
+> = {
+  transition: {
+    file: 'Perfil 1 - Transición.png',
+    alt: {
+      en: 'Illustration of the Smoker in Transition profile',
+      es: 'Ilustración del perfil Fumador en Transición',
+    },
+  },
+  anxiolytic: {
+    file: 'Perfil 2 - Ansiolítico.png',
+    alt: {
+      en: 'Illustration of the Anxiolytic profile',
+      es: 'Ilustración del Perfil Ansiolítico',
+    },
+  },
+  productive: {
+    file: 'Perfil 3 - Productivo.png',
+    alt: {
+      en: 'Illustration of the Productive / Creative profile',
+      es: 'Ilustración del Perfil Productivo / Creativo',
+    },
+  },
+  sensory: {
+    file: 'Perfil 4 - Lifestyle.png',
+    alt: {
+      en: 'Illustration of the Sensory / Lifestyle profile',
+      es: 'Ilustración del Perfil Sensorial / Lifestyle',
+    },
+  },
 }
 
 const categoryIcons = {
@@ -67,6 +107,18 @@ export function Results({ blendRecommendations, smokerProfileType, onRetake, onV
           className="mb-8"
         >
           <Card className="overflow-hidden border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+            {/* A sangre: -mt-6 cancela el py-6 del Card para que la ilustración
+                toque el borde y el overflow-hidden la recorte en las esquinas.
+                El gap-6 del Card repone justo debajo el aire que ese padding
+                daba antes, así que nada del contenido de abajo se mueve. */}
+            <Image
+              src={encodeURI(`/${PROFILE_ILLUSTRATIONS[smokerProfileType].file}`)}
+              alt={PROFILE_ILLUSTRATIONS[smokerProfileType].alt[language]}
+              width={1264}
+              height={848}
+              priority
+              className="-mt-6 w-full aspect-[1264/848] object-cover"
+            />
             <div className="h-1 bg-gradient-to-r from-primary to-accent" />
             <CardContent className="p-6">
               <div className="flex items-start gap-4 mb-4">
