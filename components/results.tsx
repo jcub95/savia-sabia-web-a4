@@ -22,37 +22,42 @@ interface ResultsProps {
 }
 
 /**
- * Ilustración por perfil. Los archivos traen espacios y acentos en el nombre,
- * así que la ruta se codifica una sola vez aquí en vez de escribir %20 a mano.
- * Dimensiones reales de los cuatro PNG: 1264x848.
+ * Ilustración por perfil. WebP a calidad 82: los cuatro PNG pesaban 4.4 MB en
+ * total y quedaron en 319 KB, sin diferencia visible al tamaño en que se
+ * muestran. WebP y no AVIF porque `images.unoptimized` hace que next/image
+ * emita un <img> con un solo src, sin srcset ni negociación de formato: el
+ * archivo que se sirve tiene que abrir en cualquier navegador, incluidos los
+ * webviews de Instagram y WhatsApp por donde llega el tráfico.
+ * Nombres en ASCII y sin espacios para que la ruta no necesite codificarse.
+ * Dimensiones: 1264x848.
  */
 const PROFILE_ILLUSTRATIONS: Record<
   SmokerProfileType,
   { file: string; alt: { en: string; es: string } }
 > = {
   transition: {
-    file: 'Perfil 1 - Transición.png',
+    file: 'perfil-1-transicion.webp',
     alt: {
       en: 'Illustration of the Smoker in Transition profile',
       es: 'Ilustración del perfil Fumador en Transición',
     },
   },
   anxiolytic: {
-    file: 'Perfil 2 - Ansiolítico.png',
+    file: 'perfil-2-ansiolitico.webp',
     alt: {
       en: 'Illustration of the Anxiolytic profile',
       es: 'Ilustración del Perfil Ansiolítico',
     },
   },
   productive: {
-    file: 'Perfil 3 - Productivo.png',
+    file: 'perfil-3-productivo.webp',
     alt: {
       en: 'Illustration of the Productive / Creative profile',
       es: 'Ilustración del Perfil Productivo / Creativo',
     },
   },
   sensory: {
-    file: 'Perfil 4 - Lifestyle.png',
+    file: 'perfil-4-lifestyle.webp',
     alt: {
       en: 'Illustration of the Sensory / Lifestyle profile',
       es: 'Ilustración del Perfil Sensorial / Lifestyle',
@@ -112,7 +117,7 @@ export function Results({ blendRecommendations, smokerProfileType, onRetake, onV
                 El gap-6 del Card repone justo debajo el aire que ese padding
                 daba antes, así que nada del contenido de abajo se mueve. */}
             <Image
-              src={encodeURI(`/${PROFILE_ILLUSTRATIONS[smokerProfileType].file}`)}
+              src={`/${PROFILE_ILLUSTRATIONS[smokerProfileType].file}`}
               alt={PROFILE_ILLUSTRATIONS[smokerProfileType].alt[language]}
               width={1264}
               height={848}
