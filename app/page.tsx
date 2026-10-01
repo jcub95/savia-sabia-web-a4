@@ -1,7 +1,7 @@
 'use client'
 
-import { Suspense, useState, useCallback, useMemo, useEffect } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Welcome } from '@/components/welcome'
 import { Survey } from '@/components/survey'
@@ -29,37 +29,80 @@ const VIEW_PARAM: Partial<Record<AppView, string>> = {
 }
 
 function SaviaSabiaAppInner() {
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null)
   const [blendRecommendations, setBlendRecommendations] = useState<Blend[]>([])
   const [smokerProfileType, setSmokerProfileType] = useState<SmokerProfileType>('sensory')
 
-  // URL is the single source of truth for current view.
-  // Derived synchronously from searchParams — no useEffect bridge needed.
-  const currentView = useMemo<AppView>(() => {
+  // Vista pedida por el URL. Solo se usa para el arranque y para el boton de
+  // atras del navegador; no es lo que decide que se pinta.
+  const urlView = useMemo<AppView>(() => {
     const v = searchParams.get('view')
     if (v && Object.values(VIEW_PARAM).includes(v as string)) return v as AppView
     return 'welcome'
   }, [searchParams])
 
-  // If the user lands on /?view=results without quiz data (direct link, reload),
-  // redirect silently to home.
-  useEffect(() => {
-    if (currentView === 'results' && !quizAnswers) {
-      router.replace('/')
-    }
-  }, [currentView, quizAnswers, router])
+  // La vista vive en memoria, no en el URL.
+  //
+  // Antes se derivaba solo de useSearchParams(), asi que avanzar de pantalla
+  // dependia de que router.push() completara una navegacion del App Router.
+  // Las seis vistas son la misma ruta con otro search param, pero el router
+  // igual pide el payload RSC al servidor. En los navegadores embebidos de
+  // Instagram y Taplink esa peticion se demora o falla: si se cuelga, la
+  // transicion queda suspendida y la pantalla se congela; si falla, el router
+  // cae a una recarga completa que borra las respuestas del quiz. En los dos
+  // casos el usuario toca "ver resultados" y no pasa nada visible.
+  //
+  // Ahora la vista es estado de React y el URL se actualiza con la History API
+  // nativa, que Next sincroniza con useSearchParams sin pedir nada al servidor
+  // ni recargar. El avance de pantalla ya no toca la red.
+  const [view, setView] = useState<AppView>(urlView)
 
-  // All navigation goes through router.push so URL and view state never diverge.
+  // Ultima vista que pedimos nosotros. Sirve para distinguir un cambio de URL
+  // propio (el push de navigate) de uno externo (atras/adelante del navegador).
+  const intendedViewRef = useRef<AppView>(urlView)
+
+  useEffect(() => {
+    if (urlView === intendedViewRef.current) return
+    // El URL cambio por fuera de navigate(): atras/adelante. Lo seguimos.
+    intendedViewRef.current = urlView
+    setView(urlView)
+  }, [urlView])
+
   const navigate = useCallback(
-    (view: AppView) => {
-      const param = VIEW_PARAM[view]
-      router.push(param ? `/?view=${param}` : '/')
+    (next: AppView) => {
+      intendedViewRef.current = next
+      // Primero el estado: esto es sincrono y no toca la red.
+      setView(next)
+      const param = VIEW_PARAM[next]
+      try {
+        window.history.pushState(null, '', param ? `/?view=${param}` : '/')
+      } catch (err) {
+        // El URL se queda desalineado, pero la vista ya cambio. Que compartir
+        // el enlace no sirva es mucho menos grave que un quiz que no avanza.
+        console.warn('[nav] no se pudo actualizar el URL:', err)
+      }
     },
-    [router],
+    [],
   )
+
+  // Entrar directo a /?view=results sin datos del quiz (enlace compartido,
+  // recarga) no puede dejar la pantalla en blanco: se resuelve a welcome al
+  // pintar, sin esperar a ninguna navegacion.
+  const currentView: AppView = view === 'results' && !quizAnswers ? 'welcome' : view
+
+  // Y de paso se corrige el URL, pero eso ya no afecta lo que se ve.
+  useEffect(() => {
+    if (view !== 'results' || quizAnswers) return
+    intendedViewRef.current = 'welcome'
+    setView('welcome')
+    try {
+      window.history.replaceState(null, '', '/')
+    } catch (err) {
+      console.warn('[nav] no se pudo limpiar el URL:', err)
+    }
+  }, [view, quizAnswers])
 
   const handleGoHome = useCallback(() => navigate('welcome'), [navigate])
   const handleStartSurvey = useCallback(() => navigate('survey'), [navigate])

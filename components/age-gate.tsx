@@ -27,16 +27,22 @@ export function AgeGate() {
       if (verified !== 'true') {
         setOpen(true)
       }
-    } catch {
-      // localStorage no disponible (modo privado, etc.) — no bloqueamos la app por esto.
+    } catch (err) {
+      // Storage bloqueado o particionado: pasa en los webviews de Instagram
+      // y Facebook, que corren en un contexto tipo incognito. No bloqueamos
+      // la app por esto; solo se vuelve a preguntar la edad en cada visita.
+      console.warn('[age-gate] no se pudo leer localStorage:', err)
     }
   }, [])
 
   const handleConfirm = () => {
     try {
       window.localStorage.setItem(STORAGE_KEY, 'true')
-    } catch {
-      // si no se puede persistir, igual dejamos pasar en esta sesión
+    } catch (err) {
+      // No se pudo persistir: igual dejamos pasar en esta sesion. El
+      // setOpen(false) de abajo esta fuera del try a proposito, para que
+      // una excepcion aqui nunca pueda dejar el modal trabado.
+      console.warn('[age-gate] no se pudo guardar en localStorage:', err)
     }
     setOpen(false)
   }
