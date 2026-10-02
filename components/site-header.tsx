@@ -46,12 +46,12 @@ export function SiteHeader() {
         {/* Logo + wordmark → siempre vuelve al inicio */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setMobileOpen(false)}>
           <img
-            src="/SaviaSabia_logo_color_transparente.svg"
+            src="/brand/logo-color.svg"
             alt="Savia Sabia"
             className="h-10 w-auto dark:hidden"
           />
           <img
-            src="/SaviaSabia_logo_invertido_transparente.svg"
+            src="/brand/logo-invertido.svg"
             alt="Savia Sabia"
             className="h-10 w-auto hidden dark:block"
           />

@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div className="col-span-2 md:col-span-1 space-y-3">
           <Link href="/" className="flex items-center gap-2">
             <img
-              src="/SaviaSabia_logo_monotonico_invertido_transparente.svg"
+              src="/brand/logo-monotonico-invertido.svg"
               alt="Savia Sabia"
               width={24}
               height={40}

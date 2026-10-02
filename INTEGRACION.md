@@ -100,7 +100,7 @@ Claude Code):
 
 ## 3. Decisiones y correcciones que tomé
 
-- **Envío gratis: usé Q150, no Q200.** Tu doc `Paginas_de_Soporte.md` decía
+- **Envío gratis: usé Q150, no Q200.** Tu doc `3-producto/paginas-de-soporte.md` decía
   Q200, pero `lib/cart-context.tsx` ya tiene Q150 implementado como
   `freeShippingThreshold` — y tu prompt de continuidad confirma que Q150 es
   el valor correcto. Ajusté el copy de Envíos y Pagos y del FAQ para que

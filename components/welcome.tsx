@@ -94,7 +94,7 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
             transition={{ duration: 0.6 }}
           >
             <motion.img
-              src="/SaviaSabia_logo_color_transparente.svg"
+              src="/brand/logo-color.svg"
               alt="Savia Sabia"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -102,7 +102,7 @@ export function Welcome({ onStartSurvey, onViewHerbarium: _onViewHerbarium, onSh
               className="w-32 md:w-40 h-auto mx-auto mb-8 dark:hidden"
             />
             <motion.img
-              src="/SaviaSabia_logo_invertido_transparente.svg"
+              src="/brand/logo-invertido.svg"
               alt="Savia Sabia"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}

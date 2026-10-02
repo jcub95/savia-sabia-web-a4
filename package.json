@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "savia-sabia-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "types": "supabase gen types typescript --project-id beisjvvchhzygnotxigo > lib/database.types.ts"
+    "types": "supabase gen types typescript --project-id beisjvvchhzygnotxigo > lib/database.types.ts",
+    "brand:sync": "node scripts/brand-sync.mjs",
+    "brand:check": "node scripts/brand-sync.mjs --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

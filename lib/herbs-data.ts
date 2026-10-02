@@ -962,7 +962,7 @@ export const blends: Blend[] = [
 ]
 
 // Derives the narrative smoker profile from the winning blend.
-// Docs: Quiz_Especificacion.md §3 "Etiqueta de perfil"
+// Docs: 3-producto/quiz-especificacion.md §3 "Etiqueta de perfil"
 const blendToProfile: Record<BlendId, SmokerProfileType> = {
   'claridad-pulmonar': 'transition',
   'proteccion':        'transition',
@@ -1117,7 +1117,7 @@ export function calculateRecommendations(profile: UserProfile): Herb[] {
   return sortedHerbs.slice(0, 4)
 }
 
-// Fixed complementary blend map. Docs: Quiz_Especificacion.md §3
+// Fixed complementary blend map. Docs: 3-producto/quiz-especificacion.md §3
 const complementaryBlend: Record<BlendId, BlendId> = {
   'claridad-pulmonar': 'proteccion',
   'proteccion':        'enfoque',
@@ -1127,7 +1127,7 @@ const complementaryBlend: Record<BlendId, BlendId> = {
   'nutre-el-alma':     'enfoque',
 }
 
-// Tiebreak priority when total scores are equal. Docs: Quiz_Especificacion.md §3
+// Tiebreak priority when total scores are equal. Docs: 3-producto/quiz-especificacion.md §3
 const tiebreakOrder: BlendId[] = [
   'claridad-pulmonar', 'enfoque', 'suavidad', 'sueno-profundo', 'nutre-el-alma', 'proteccion',
 ]

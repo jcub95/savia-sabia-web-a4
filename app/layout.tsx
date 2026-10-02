@@ -84,7 +84,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: SITE_NAME,
   url: SITE_URL,
-  logo: `${SITE_URL}/SaviaSabia_logo_color_transparente.svg`,
+  logo: `${SITE_URL}/brand/logo-color.svg`,
   sameAs: ['https://www.instagram.com/savia.sabia.herbs/'],
 }
 

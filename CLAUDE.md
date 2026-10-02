@@ -17,20 +17,31 @@ solo idioma dentro de los componentes.
 
 ---
 
-## 2. Fuentes de verdad (carpeta `docs/`)
+## 2. Fuentes de verdad (viven FUERA de este repo)
 
 Antes de escribir cualquier copy de producto, **lee el documento correspondiente**.
 El texto en español ya existe y está aprobado; no lo reinventes ni lo traduzcas
 desde el inglés.
 
+La carpeta `docs/` de este repo **ya no existe**: era una copia de estos archivos y
+ya había divergido. La fuente única está un nivel arriba, en el espacio de trabajo
+de la marca. Rutas relativas a la raíz de este repo:
+
 | Documento | Contiene |
 |---|---|
-| `docs/Catalogo_e_Ingredientes.md` | Las 15 hierbas: efecto, beneficio, ángulo de marketing |
-| `docs/Portafolio_de_Mezclas.md` | Las 6 mezclas: alquimia, perfil sensorial, efecto, target |
-| `docs/Buyer_Persona_y_Matriz_Quiz.md` | 4 perfiles de comprador + lógica del quiz |
-| `docs/Manifiesto_y_Filosofia.md` | Historia, propósito, misión, visión, valores |
-| `docs/Manual_Visual_y_Diseno.md` | Paleta, tipografía, estilo de ilustración botánica |
-| `docs/SaviaSabia_Logo_Especificacion.md` | Logo oficial: geometría, flora, 4 variantes |
+| `../3-producto/catalogo-e-ingredientes.md` | Las 15 hierbas: efecto, beneficio, ángulo de marketing |
+| `../3-producto/portafolio-de-mezclas.md` | Las 6 mezclas: alquimia, perfil sensorial, efecto, target |
+| `../3-producto/buyer-persona-y-matriz-quiz.md` | 4 perfiles de comprador + lógica del quiz |
+| `../3-producto/quiz-especificacion.md` | Especificación funcional del quiz |
+| `../3-producto/perfil-sabor-y-funcion-hierbas.md` | Perfil de sabor y función por hierba |
+| `../3-producto/paginas-de-soporte.md` | Copy de páginas legales y de soporte |
+| `../2-marca/manifiesto-y-filosofia.md` | Historia, propósito, misión, visión, valores |
+| `../2-marca/manual-visual-y-diseno.md` | Paleta, tipografía, estilo de ilustración botánica |
+| `../2-marca/logo-especificacion.md` | Logo oficial: geometría, flora, 4 variantes |
+| `../2-marca/nucleo-de-marca.md` | Núcleo compartido por todos los proyectos de la marca |
+
+Si trabajas con un clon de solo este repositorio, esos archivos no están. Pídelos
+antes de escribir copy; no lo reconstruyas de memoria.
 
 **Si un dato del código contradice estos documentos, gana el documento** — salvo
 que la etiqueta física del producto diga otra cosa (ver punto 4).
@@ -52,7 +63,7 @@ que la etiqueta física del producto diga otra cosa (ver punto 4).
 mezclas. En inglés también se llaman Suavidad, Nutre el Alma, etc. Los eslóganes
 sí se traducen.
 
-> Nota: `docs/Portafolio_de_Mezclas.md` registra el eslogan de Enfoque como
+> Nota: `../3-producto/portafolio-de-mezclas.md` registra el eslogan de Enfoque como
 > "Mente Despierta", pero la etiqueta impresa dice **"Concentración Natural"**.
 > Gana la etiqueta. Si encuentras otra discrepancia así, avísame antes de elegir.
 
@@ -72,8 +83,19 @@ Oliva                   #5A6B52   texto secundario
 - **Lema y notas:** serif itálica (Crimson Pro o equivalente).
 - **Estética:** minimalismo botánico premium, tipo Aesop. **No** emojis decorativos
   flotando, **no** estética esotérica o new-age.
-- **Logo:** `public/savia-sabia-logo.svg` (monograma SS con flora, fondo
-  transparente). No lo redibujes ni generes SVG del logo: referencia el archivo.
+- **Logo:** monograma SS con flora, fondo transparente. No lo redibujes ni
+  generes SVG del logo: referencia el archivo. Tres variantes publicadas:
+
+  | Ruta en el sitio | Uso |
+  |---|---|
+  | `public/brand/logo-color.svg` | sobre fondo crema |
+  | `public/brand/logo-invertido.svg` | sobre fondo verde botánico |
+  | `public/brand/logo-monotonico-invertido.svg` | pie de página, una tinta |
+
+  **`public/brand/` es un derivado, no el maestro.** El archivo maestro con las
+  31 variantes está en `../2-marca/logo/`. Nunca edites un SVG dentro de
+  `public/brand/`: cambia el maestro y corre `pnpm brand:sync`. Para detectar
+  desincronización, `pnpm brand:check`.
 
 **Lema oficial:** *"Menos químicos. Más plantas."*
 No uses "Botánica de precisión" como lema público — ese es el nombre interno de
@@ -120,7 +142,7 @@ Los tres pilares argumentativos de toda comunicación:
   `cart`, `herb-detail`, `language-toggle`.
 
 La lógica del quiz debe corresponder a la matriz documentada en
-`docs/Buyer_Persona_y_Matriz_Quiz.md` (mayoría de A/B/C/D → perfil → mezcla óptima
+`../3-producto/buyer-persona-y-matriz-quiz.md` (mayoría de A/B/C/D → perfil → mezcla óptima
 + complementaria). Si el código diverge del documento, avísame.
 
 ---
@@ -132,7 +154,7 @@ La lógica del quiz debe corresponder a la matriz documentada en
 - **Cambios acotados y verificables.** Una tarea a la vez; al terminar, confirma
   que `npm run dev` compila sin errores.
 - **No reescribas archivos completos** si basta con editar unas líneas.
-- **No inventes copy de producto.** Sale de `docs/`. Si falta algo, pregunta.
+- **No inventes copy de producto.** Sale de `../3-producto/`. Si falta algo, pregunta.
 - Ejecuta `npm run lint` antes de dar por terminado un cambio grande.
 
 ---
@@ -306,10 +328,18 @@ Guardadas en el SQL Editor de Supabase: `Sumar producción`, `Conteo físico`,
 
 ## Pendientes
 
-- [ ] Dominio propio (`saviasabia.com`) → desbloquea Resend
-- [ ] Sentry antes de mandar tráfico real
-- [ ] Sesión de fotografía (guía PDF entregada)
+Estado a septiembre 2026. El seguimiento formal vive en
+`../1-gestion/4-control/`; esta lista es el resumen operativo.
+
+- [x] Dominio propio → cerrado
+- [x] Sentry → cerrado (`instrumentation.ts`, `sentry.*.config.ts`)
+- [~] Sesión de fotografía — a la mitad. **Bloqueada** por la decisión de empaque:
+      está en evaluación cambiar el tamaño de filtros y migrar la mezcla suelta a
+      un formato tipo trifoliar. No fotografiar producto empacado hasta cerrarla.
 - [ ] Migrar `?view=` a rutas reales de Next.js
 - [ ] PostHog (mes 2)
 - [ ] Verificar especie real de Gordolobo, Menta y Pasiflora con proveedor
-- [ ] Formalización SAT → Recurrente para pagos en línea
+- [ ] Formalización SAT → Recurrente para pagos en línea. **Bloqueada por flujo de
+      caja a propósito:** se reinvierte el ingreso del negocio en el trámite fiscal.
+      Mientras siga abierta, el cierre de venta es por WhatsApp por diseño, no por
+      falta de implementación.

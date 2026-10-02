@@ -1,5 +1,5 @@
 // Contenido bilingüe de las páginas de soporte (Nosotros, Contacto, Envíos y Pagos,
-// Preguntas Frecuentes, Avisos Legales). Transcrito de docs/Paginas_de_Soporte.md,
+// Preguntas Frecuentes, Avisos Legales). Transcrito de 3-producto/paginas-de-soporte.md,
 // con el umbral de envío gratis alineado a Q150 (confirmado en lib/cart-context.tsx).
 //
 // Mantiene el mismo patrón `LocalizedString` que ya usa lib/herbs-data.ts, para que
@@ -208,7 +208,7 @@ export const enviosContent = {
     es: 'Los tiempos corren a partir de la confirmación del pago. Los pedidos confirmados después de las 4:00 p.m. se despachan al día hábil siguiente.',
   } satisfies LocalizedString,
 
-  // NOTA: umbral oficial confirmado en Q200, alineado con docs/Paginas_de_Soporte.md.
+  // NOTA: umbral oficial confirmado en Q200, alineado con 3-producto/paginas-de-soporte.md.
   freeShipping: {
     en: 'Free shipping on orders over Q200.',
     es: 'Envío gratis en pedidos mayores a Q200.',
